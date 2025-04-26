@@ -2,18 +2,24 @@ import 'package:flutter/material.dart';
 
 class UniColor{
   static Color primary            = const Color(0xFF00875F);
-  static Color red          = const Color(0xFFFF3B30);
+  static Color red                = const Color(0xFFFF3B30);
   static Color yellow             = const Color(0xFFF8A849);
 
   static Color bgColor            = const Color(0xFF29292E);
   static Color bgColor2           = const Color.fromARGB(255, 91, 89, 89);
   
 
-  static Color neutralDark        = const Color(0xFF000000); 
-  static Color neutral            = const Color(0xFF757575);
-  static Color neutralLight       = const Color(0xFFD4D4D4);
+  // static Color neutralDark        = const Color(0xFF000000); 
+  // static Color neutral            = const Color(0xFF757575);
+  // static Color neutralLight       = const Color(0xFFD4D4D4);
 
-  static Color white              =  Colors.white;  
+  // Neutral Colors (can use for text, icons, borders, etc.) from system design
+  static Color white = const Color(0xFFFFFFFF);  
+  static Color grayLight = const Color(0xFFE1E1E6);  // gray_100
+  static Color grayMedium = const Color(0xFFC4C4CC); // gray_200
+  static Color grayDark = const Color(0xFF7C7C8A);   // gray_300
+
+  // static Color white              =  Colors.white;  
 
   static Color get backGroundColor { 
     return UniColor.bgColor;
@@ -23,23 +29,23 @@ class UniColor{
   }
 
   static Color get textNormal {
-    return UniColor.neutralDark;
+    return UniColor.white;
   }
 
   static Color get textLight {
-    return UniColor.neutralLight;
+    return UniColor.grayMedium;
   }
 
   static Color get iconNormal {
-    return UniColor.neutral;
+    return UniColor.white;
   }
 
   static Color get iconLight {
-    return UniColor.neutralLight;
+    return UniColor.grayMedium;
   }
 
   static Color get disabled {
-    return UniColor.neutralLight;
+    return UniColor.grayDark;
   }
 }
 
