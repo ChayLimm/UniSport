@@ -2,17 +2,19 @@
 // Now use T instead of the specific model 
 // then replace T-type with the Participant model when model is implemented
 
-abstract class ParticipantRepository <T>{
+import 'package:unitime/domain/model/participant.dart';
+
+abstract class ParticipantRepository{
   
   // Functon to get all participants 
-  Future<List<T>> getAllParticipants();         // for Get/participants
+  Future<List<Participant>> getAllParticipants();         // for Get/participants
   
   // funtion to add participant
-  Future<T> addparticipant(T participant);      // for Post/participants
+  Future<Participant> addparticipant(Participant participant);      // for Post/participants
 
   // function to update participant
-  Future<T> updateParticipant(String id,T participant);  //for put/participants
+  Future<Participant> updateParticipant(String id,Participant participant);  //for put/participants
   
   // function to delete participant 
-  Future<T> deleteParticipant(String id);      // for Delete/participants
+  Future<Participant> deleteParticipant(String id);      // for Delete/participants
 }
