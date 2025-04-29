@@ -1,5 +1,5 @@
 class Checkpoint {
-  final int id; //pk
+  final int? id; //pk
   final int segmentId;  //fk
   final int participantId;  //fk 
   final DateTime checkpointTime;
@@ -7,7 +7,7 @@ class Checkpoint {
   final DateTime updateAt;
 
   Checkpoint({
-    required this.id, 
+    this.id, 
     required this.segmentId, 
     required this.participantId, 
     required this.checkpointTime, 
