@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:unitime/presentation/provider/stopwatch_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:unitime/presentation/provider/race_provider.dart';
 import 'package:unitime/presentation/themes/theme.dart';
 
 class StopWatch extends StatelessWidget {
@@ -9,7 +9,7 @@ class StopWatch extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    final timerProvider = context.watch<StopWatchProvider>();
+    final timerProvider = context.watch<RaceProvider>();
 
     return Container(
       padding: EdgeInsets.symmetric(

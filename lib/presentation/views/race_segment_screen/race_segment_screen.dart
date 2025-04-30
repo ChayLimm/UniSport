@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:unitime/domain/model/race.dart';
 import 'package:unitime/domain/model/segment.dart';
-import 'package:unitime/presentation/provider/stopwatch_provider.dart';
+import 'package:unitime/presentation/provider/race_provider.dart';
 import 'package:unitime/presentation/themes/theme.dart';
 import 'package:unitime/presentation/views/race_segment_screen/widget/segment_appbar.dart';
 import 'package:unitime/presentation/views/race_segment_screen/widget/segment_card.dart';
@@ -22,7 +22,8 @@ class RaceSegmentScreen extends StatelessWidget {
       status: RaceStatus.pending,
       createAt: DateTime.now(),
       updateAt: DateTime.now(),
-      startTime: DateTime.now());
+      startTime:  DateTime.now().subtract(Duration(hours: 1))
+  );
   final List<Segment> sampleSegments = [
     Segment(
       id: 1,
@@ -52,8 +53,8 @@ class RaceSegmentScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final stopWatchProvider = context.read<StopWatchProvider>();
-    stopWatchProvider.start();
+    final raceProvider = context.read<RaceProvider>();
+    raceProvider.start(race);
 
     return Scaffold(
       bottomNavigationBar: UniBottomnav(),
@@ -90,7 +91,7 @@ class RaceSegmentScreen extends StatelessWidget {
             Spacer(),
             UniButton(
                 onTrigger: () {
-                  print("Hi");
+                  raceProvider.endRace(race.id);
                 },
                 color: UniColor.red,
                 label: "End Race")
