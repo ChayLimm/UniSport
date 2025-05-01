@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:unitime/domain/model/race.dart';
-import 'package:unitime/domain/model/segment.dart';
 import 'package:unitime/domain/services/race_service.dart';
 
 class RaceProvider extends ChangeNotifier {
@@ -10,6 +9,12 @@ class RaceProvider extends ChangeNotifier {
 
   int get elapsedMilliseconds => _elapsedMilliseconds?? 0;
   Future<List<Race>> get racelist => RaceService.instance.getRace();
+  Race? seletectedRace;
+
+  void setRace(Race race){
+    seletectedRace= race;
+    notifyListeners();
+  }
 
   void start(Race race) {
     _timer?.cancel();
@@ -20,7 +25,9 @@ class RaceProvider extends ChangeNotifier {
         _elapsedMilliseconds = _elapsedMilliseconds! + 100;
         notifyListeners();
       } else {
-        timer.cancel();
+        _elapsedMilliseconds = 0;
+        RaceService.instance.startRace(race.id);
+        notifyListeners();
       }
     });
   }

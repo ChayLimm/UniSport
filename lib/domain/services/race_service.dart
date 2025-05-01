@@ -40,6 +40,9 @@ class RaceService {
     }
     return duration.inMilliseconds;
   }
+  void startRace(int raceID){
+    _repository!.startRace(raceID);
+  }
 
   void endRace(int raceID){
     _repository!.endRace(raceID);
