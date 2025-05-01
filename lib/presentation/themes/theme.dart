@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-class UniColor{
+class   UniColor{
   static Color primary            = const Color(0xFF00875F);
   static Color red                = const Color(0xFFFF3B30);
   static Color yellow             = const Color(0xFFF8A849);
-
-  static Color bgColor            = const Color(0xFF29292E);
-  static Color bgColor2           = const Color.fromARGB(255, 91, 89, 89);
+  static Color backgroundColor    = const Color(0xFF121214);
+  static Color black1            = const Color(0xFF29292E);
+  static Color black2           = const Color(0xFF202024);
   
 
   // static Color neutralDark        = const Color(0xFF000000); 
@@ -22,10 +22,10 @@ class UniColor{
   // static Color white              =  Colors.white;  
 
   static Color get backGroundColor { 
-    return UniColor.bgColor;
+    return UniColor.backgroundColor;
   }
   static Color get backGroundColor2 { 
-    return UniColor.bgColor2;
+    return UniColor.black2;
   }
 
   static Color get textNormal {
@@ -53,9 +53,9 @@ class UniColor{
 /// Definition of App text styles.
 ///
 class UniTextStyles {
-  static TextStyle heading = const TextStyle(fontSize: 28, fontWeight: FontWeight.bold);
+  static TextStyle heading =  TextStyle(fontSize: 28, fontWeight: FontWeight.bold,color: UniColor.white);
 
-  static TextStyle body =  const TextStyle(fontSize: 14, fontWeight: FontWeight.w400);
+  static TextStyle body =   TextStyle(fontSize: 14,color: UniColor.white);
   static TextStyle label =  const TextStyle(fontSize: 14, fontWeight: FontWeight.bold);
 
   static TextStyle button =  TextStyle(fontSize: 14, fontWeight: FontWeight.w500,color: UniColor.white);
