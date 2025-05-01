@@ -24,7 +24,8 @@ class SegmentCard extends StatelessWidget {
           style: UniTextStyles.body.copyWith(color: UniColor.grayDark)
         ),
         trailing: IconButton(
-          onPressed: (){}, 
+          onPressed: (){
+          }, 
           icon: Icon(Icons.edit),
           color: UniColor.white,
           iconSize: 16,
