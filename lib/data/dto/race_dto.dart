@@ -6,8 +6,8 @@ class RaceDto {
     final Map<String, dynamic> data = {
       'name': race.name,
       'description': race.description,
-      'start_time': race.startTime.toIso8601String(),
-      'end_time': race.endTime.toIso8601String(),
+      'start_time': race.startTime?.toIso8601String(),
+      'end_time': race.endTime?.toIso8601String(),
       'status': race.status.label,
       'create_at': race.createAt.toIso8601String(),
       'update_at': race.updateAt.toIso8601String(),

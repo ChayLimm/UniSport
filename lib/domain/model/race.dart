@@ -17,8 +17,8 @@ class Race {
   final int? id; // primary key - optional cuz database will generate auto increas
   final String name;
   final String description;
-  final DateTime startTime;
-  final DateTime endTime;
+  final DateTime? startTime;
+  final DateTime? endTime;
   final RaceStatus status;
   final DateTime createAt;
   final DateTime updateAt;
@@ -29,8 +29,8 @@ class Race {
       this.id,
       required this.name,
       required this.description,
-      required this.startTime,
-      required this.endTime,
+      this.startTime,
+      this.endTime,
       required this.status,
       required this.createAt,
       required this.updateAt,
