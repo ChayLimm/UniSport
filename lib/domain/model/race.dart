@@ -14,7 +14,7 @@ enum RaceStatus {
 /// Race class,
 ///
 class Race {
-  final int? id; // primary key - optional cuz database will generate auto increas
+  final int id; // primary key - optional cuz database will generate auto increas
   final String name;
   final String description;
   final DateTime? startTime;
@@ -26,7 +26,7 @@ class Race {
   final List<Participant>? participants;
 
   Race({
-      this.id,
+      required this.id,
       required this.name,
       required this.description,
       this.startTime,

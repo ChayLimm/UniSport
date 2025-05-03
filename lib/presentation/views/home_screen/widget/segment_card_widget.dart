@@ -11,7 +11,7 @@ class SegmentCard extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 6),
       decoration: BoxDecoration(
-        color: UniColor.bgColor,
+        color: UniColor.backgroundColor,
         borderRadius: BorderRadius.circular(UniSpacing.radius)
       ),
       child: ListTile(

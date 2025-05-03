@@ -13,19 +13,15 @@ class RaceDto {
       'update_at': race.updateAt.toIso8601String(),
     };
 
-    if (race.id != null) {
-      data['id'] = race.id;
-    }
-
+    data['id'] = race.id;
+  
     return data;
   }
 
   // convert JSON to race model
   static Race fromJson(Map<String, dynamic> json) {
     return Race(
-      id: json['id'] != null
-          ? int.tryParse(json['id'].toString())
-          : null, //check condition if null
+      id: int.tryParse(json['id'].toString())!,
       name: json['name'],
       description: json['description'],
       startTime: DateTime.parse(json['start_time']),
