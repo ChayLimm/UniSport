@@ -16,7 +16,7 @@ class RaceCard extends StatelessWidget {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: UniColor.bgColor, 
+        color: UniColor.backgroundColor, 
         borderRadius: BorderRadius.circular(UniSpacing.radius),
       ),
       child: Stack(
