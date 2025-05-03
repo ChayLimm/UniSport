@@ -1,16 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:unitime/domain/model/participant.dart';
 import 'package:unitime/domain/model/race.dart';
+import 'package:unitime/presentation/provider/participant_provider.dart';
 import 'package:unitime/presentation/themes/theme.dart';
 import 'package:unitime/presentation/utils/time_convertor.dart';
+import 'package:unitime/presentation/views/participant_screen/participant_form_dialog.dart';
 import 'package:unitime/presentation/views/participant_screen/widgets/participant_header.dart';
 import 'package:unitime/presentation/views/participant_screen/widgets/participant_list.dart';
 import 'package:unitime/presentation/widgets/UniButton.dart';
 import 'package:unitime/presentation/widgets/uni_app_bar.dart';
 
-class ParticipantsScreen extends StatelessWidget {
-  ParticipantsScreen({super.key});
+class ParticipantsScreen extends StatefulWidget {
+  const ParticipantsScreen({super.key});
 
+  @override
+  State<ParticipantsScreen> createState() => _ParticipantsScreenState();
+}
+
+class _ParticipantsScreenState extends State<ParticipantsScreen> {
   // dummy data
   final Race race = Race(
       id: 01,
@@ -57,6 +65,8 @@ class ParticipantsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final participants =
+        context.watch<ParticipantProvider>().participants; // get participants
     return Scaffold(
       backgroundColor: UniColor.backGroundColor,
       body: Padding(
@@ -68,27 +78,39 @@ class ParticipantsScreen extends StatelessWidget {
                 subTitle: DateTimeUtils.formatDateTime(race.createAt),
                 onTapBack: () {
                   // navigate back
+                  Navigator.pop(context);
                 }),
 
             const SizedBox(height: 12),
 
             // add participant section
-            ParticipantHeader(
-              participants: participants, 
-              race: race
-            ),
+          ParticipantHeader(
+            participants: participants,
+            race: race,
+            onAdd: (participant) async {
+              await showParticipantModalForm(
+                context: context,
+                race: race,
+                onSaved: (participant) async{
+                  await context.read<ParticipantProvider>().addParticipant(participant);
+                },
+              );
+            },
+          ),
 
             const SizedBox(height: 16),
 
-            // Participant List Views
+            // Participant List Views - edit/delete action
             ParticipantList(
               participants: participants,
-              race: race, 
-              onSaved: (participant) { 
+              race: race,
+              onSaved: (participant) async{
                 // call provider to update participant -> service -> repo -> api
-               },
-              onDeleted: (participant){
-                // implement 
+                await context.read<ParticipantProvider>().updateParticipant(participant);
+              },
+              onDeleted: (participant) {
+                // implement
+                context.read<ParticipantProvider>().deleteParticipant(participant.id!);
               },
             ),
 
@@ -96,12 +118,10 @@ class ParticipantsScreen extends StatelessWidget {
             MouseRegion(
               cursor: SystemMouseCursors.click,
               child: UniButton(
-                onTrigger: (){}, 
-                color: UniColor.primary, 
-                label: "Start Race"
-              ),
+                  onTrigger: () {},
+                  color: UniColor.primary,
+                  label: "Start Race"),
             )
-          
           ])),
     );
   }

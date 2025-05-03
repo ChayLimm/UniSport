@@ -1,7 +1,7 @@
 import 'package:unitime/domain/model/checkpoint.dart';
 
 class Participant {
-  final int? id; // primary key
+  final int? id; // primary key - optional cuz database will generate auto increas when create new
   final int raceId; // fk
   final String userName;
   final String bibNumber;

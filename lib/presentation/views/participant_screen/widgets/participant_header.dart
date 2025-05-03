@@ -7,11 +7,13 @@ import 'package:unitime/presentation/views/participant_screen/participant_form_d
 class ParticipantHeader extends StatelessWidget {
   final List<Participant> participants;
   final Race race;
+  final Future<void> Function(Participant) onAdd;
 
   const ParticipantHeader({
     super.key,
     required this.participants,
     required this.race,
+    required this.onAdd,
   });
 
   @override
@@ -32,9 +34,9 @@ class ParticipantHeader extends StatelessWidget {
             await showParticipantModalForm(
               context: context,
               race: race,
-              onSaved: (Participant participant) {
+              onSaved: (Participant participant) async {
                 print('New participant added: ${participant.userName}');
-                // handle state update - use provider
+                await onAdd(participant);
               },
             );
           },

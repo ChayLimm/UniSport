@@ -11,7 +11,7 @@ import 'package:unitime/presentation/widgets/UniButton.dart';
 class ParticipantForm extends StatefulWidget {
   final Participant? participant; // add model-null / update-nonNull
   final Race race; // for race id -> create/update
-  final void Function(Participant) onSaveForm;
+  final Future<void> Function(Participant) onSaveForm;
   const ParticipantForm(
       {super.key,
       this.participant,
@@ -68,14 +68,14 @@ class _ParticipantFormState extends State<ParticipantForm> {
   }
 
   // on submit form
-  void submitForm() {
+  void submitForm() async{
     if (_formKey.currentState!.validate()) {
       // formatted bib number
       final formatBib = 'BIB $bibNumber';
-
+      // Create temp participant with id as null
       final participant = Participant(
         id: widget.participant?.id, // new id will generate in db-auto incresa
-        raceId: widget.race.id!,
+        raceId: widget.race.id,
         userName: userName,
         bibNumber: formatBib,
         description: description,
@@ -84,8 +84,8 @@ class _ParticipantFormState extends State<ParticipantForm> {
         updateAt: updateAt,
       );
 
-      // save form participant
-      widget.onSaveForm(participant);
+      // Call onSaveForm callback to trigger API call 
+      await widget.onSaveForm(participant);
     }
   }
 
