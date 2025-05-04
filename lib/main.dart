@@ -6,6 +6,7 @@ import 'package:unitime/presentation/provider/race_provider.dart';
 import 'package:unitime/presentation/themes/theme.dart';
 import 'package:unitime/presentation/views/home_screen/home_screen.dart';
 import 'package:unitime/presentation/views/race_segment_screen/race_segment_screen.dart';
+import 'package:unitime/presentation/views/tracking_race_screen/tracking_race_screen.dart';
 
 
 void main() {
@@ -31,10 +32,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-
       title: 'Flutter Demo',
       theme: appTheme,
-      home: HomeScreen(), // Widget where you'll access the provider
+      debugShowCheckedModeBanner: false,
+      home: TrackingRaceSegmentScreen(), // Widget where you'll access the provider
     );
   }
 }
