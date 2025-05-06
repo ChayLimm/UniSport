@@ -16,7 +16,7 @@ class ParticipantList extends StatelessWidget {
 
   final List<Participant> participants;
   final Race race;
-  final void Function(Participant) onSaved;
+  final Future<void> Function(Participant) onSaved;
   final void Function(Participant) onDeleted;
 
   @override
@@ -45,7 +45,10 @@ class ParticipantList extends StatelessWidget {
                       context: context,
                       race: race,
                       participant: participants[index],
-                      onSaved: onSaved,
+                      onSaved: (participant) async{
+                        print('New participant added: ${participant.userName}');
+                        await onSaved(participant); // call save callback
+                      } 
                     );
                   },
                 ),

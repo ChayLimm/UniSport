@@ -5,13 +5,13 @@ import 'package:unitime/presentation/themes/theme.dart';
 import 'package:unitime/presentation/views/participant_screen/widgets/participant_form.dart';
 
 /// Show full-screen dialog to add / edit participant
-Future<void> showParticipantModalForm({
+Future<Participant?> showParticipantModalForm({
   required BuildContext context,
   required Race race,
   Participant? participant,
-  required void Function(Participant) onSaved,
+  required Future<void> Function(Participant) onSaved,
 }) async {
-  await showDialog(
+  final result = await showDialog<Participant>(
     context: context,
     builder: (BuildContext context) {
       return Scaffold(
@@ -41,9 +41,9 @@ Future<void> showParticipantModalForm({
               child: ParticipantForm(
                 race: race,
                 participant: participant,
-                onSaveForm: (participant) {
-                  Navigator.pop(context); // Close full-screen
-                  onSaved(participant);
+                onSaveForm: (participant) async {
+                  await onSaved(participant); // Wait for the save operation
+                  Navigator.pop(context, participant);  // Close the dialog on success
                 },
               ),
             ),
@@ -52,8 +52,9 @@ Future<void> showParticipantModalForm({
       );
     },
   );
-}
 
+  return result;
+}
 
 
 

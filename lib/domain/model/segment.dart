@@ -1,7 +1,7 @@
 import 'package:unitime/domain/model/checkpoint.dart';
 
 class Segment {
-  final int? id; // primary key
+  final int id; // primary key
   final int raceId; // fk
   final String? description; // for distance in each segment
   final String name;
@@ -9,7 +9,7 @@ class Segment {
   final Checkpoint? checkpoint;
 
   Segment({
-    this.id, 
+    required this.id, 
     required this.raceId, 
     required this.description, 
     required this.name, 

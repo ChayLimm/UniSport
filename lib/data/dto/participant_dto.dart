@@ -3,15 +3,16 @@ import 'package:unitime/domain/model/participant.dart';
 class ParticipantDto {
   // convert model to JSON
   static Map<String, dynamic> toJson(Participant participant) {
-    final Map<String, dynamic> data = {
+    final json = {
       'race_id': participant.raceId,
       'username': participant.userName,
       'bib_number': participant.bibNumber,
-      'description': participant.description?.toString(),
+      'description': participant.description,
       'register_time': participant.registerTime.toIso8601String(),
       'create_at': participant.createAt.toIso8601String(),
-      'update_at': participant.updateAt.toIso8601String()
+      'update_at': participant.updateAt.toIso8601String(),
     };
+
 
     data['id'] = participant.id;
       return data;
