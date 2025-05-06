@@ -74,7 +74,8 @@ class _ParticipantFormState extends State<ParticipantForm> {
       final formatBib = 'BIB $bibNumber';
       // Create temp participant with id as null
       final participant = Participant(
-        id: widget.participant?.id, // new id will generate in db-auto incresa
+
+        id: widget.participant!.id, // new id will generate in db-auto incresa
         raceId: widget.race.id,
         userName: userName,
         bibNumber: formatBib,

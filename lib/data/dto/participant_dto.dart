@@ -13,18 +13,16 @@ class ParticipantDto {
       'update_at': participant.updateAt.toIso8601String(),
     };
 
-    if (participant.id != null) {
-      json['id'] = participant.id;
-    }
 
-    return json;
+    data['id'] = participant.id;
+      return data;
   }
 
   // convert JSON to model
   static Participant fromJson(Map<String, dynamic> json) {
     return Participant(
-        id: int.tryParse(json['id'])!,
-        raceId: int.tryParse(json['race_id'])!,
+        id: json['id'],
+        raceId: int.parse(json['race_id']),
         userName: json['username'],
         bibNumber: json['bib_number'],
         registerTime: DateTime.parse(json['register_time']),

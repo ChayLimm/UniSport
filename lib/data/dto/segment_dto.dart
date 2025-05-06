@@ -15,11 +15,12 @@ class SegmentDto {
   // convert JSON to segment model
   static Segment fromJson(Map<String, dynamic> json) {
     return Segment(
-        id: int.tryParse(json['id'])!, 
-        raceId: int.tryParse(json['race_id'])!,
+
+        id: json['id'],
+        raceId: int.parse(json['race_id']),
         description: json['description'],
         name: json['name'],
-        orderNumber: int.parse(json['orderNumber']),
+        orderNumber: json['orderNumber'],
         checkpoint: null);
   }
 

@@ -20,7 +20,7 @@ class SegmentCard extends StatelessWidget {
           style:  UniTextStyles.body.copyWith(fontWeight: FontWeight.bold),
         ),
         subtitle: Text(
-          segment.description,
+          segment.description?? "Null",
           style: UniTextStyles.body.copyWith(color: UniColor.grayDark)
         ),
         trailing: IconButton(

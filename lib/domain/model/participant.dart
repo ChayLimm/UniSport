@@ -12,7 +12,7 @@ class Participant {
   final List<Checkpoint>? checkpoints;
 
   Participant({
-    this.id, 
+    required this.id, 
     required this.raceId, 
     required this.userName, 
     required this.bibNumber, 
