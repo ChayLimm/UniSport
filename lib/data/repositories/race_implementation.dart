@@ -1,48 +1,100 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:unitime/data/dto/checkpoint_dto.dart';
+import 'package:unitime/data/dto/participant_dto.dart';
+import 'package:unitime/data/dto/race_dto.dart';
+import 'package:unitime/data/dto/segment_dto.dart';
 import 'package:unitime/domain/model/race.dart';
+import 'package:unitime/domain/model/segment.dart';
+import 'package:unitime/domain/model/participant.dart';
+import 'package:unitime/domain/model/checkpoint.dart';
 import 'package:unitime/domain/repositories/race_repository.dart';
 
-class RaceImplementation extends RaceRepository{
-  @override
-  Future<Race> addRace(Race race) {
-    // TODO: implement addRace
-    throw UnimplementedError();
-  }
 
-  @override
-  Future<Race> endRace(int id) {
-    // TODO: implement endRace
-    throw UnimplementedError();
-  }
+const String baseUrl = "http://127.0.0.1:8001/api"; // Replace with your actual base URL
 
+class RaceImplementation extends RaceRepository {
+  // Fetch all races
   @override
-  Future<List<Race>> getParticipantsByRaceID(int id, race, participant) {
-    // TODO: implement getParticipantsByRaceID
-    throw UnimplementedError();
-  }
+  Future<List<Race>> getRaces() async {
+    final response = await http.get(Uri.parse('$baseUrl/race'));
+    if (response.statusCode == 200) {
+      print("fecting form cloud");
+      final decoded = jsonDecode(response.body);
+      final List<dynamic> data = decoded['data'];     
+      // print(data);
+      List<Race> result = data.map((e) => RaceDto.fromJson(e)).toList();
+      print("done : $result");
+      return result; // Use RaceDto to parse
 
-  @override
-  Future<Race> getRaceByID(int id) {
-    // TODO: implement getRaceByID
-    throw UnimplementedError();
+    } else {
+      throw Exception("Failed to load races");
+    }
   }
+  @override
+  // Fetch segments by race ID
+  Future<List<Segment>> getSegmentByRaceID(int raceId) async {
+    final response = await http.post(Uri.parse('$baseUrl/race/$raceId/segments'));
+        
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      List<Segment> result = (data as List)
+          .map((e) => SegmentDto.fromJson(e as Map<String, dynamic>))
+          .toList();
+      return result;
+    } else {
+      throw Exception("Failed to load segments");
+    }
+  }
+  @override
+  // Fetch checkpoints by segment ID
+  Future<List<Checkpoint>> getCheckPointBySegmentID(int segmentId) async {
+    final response = await http.get(Uri.parse('$baseUrl/segments/$segmentId/checkpoint'));
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body);
+      return data.map((e) => CheckpointDto.fromJson(e)).toList(); // Use CheckpointDto to parse
+    } else {
+      throw Exception("Failed to load checkpoints");
+    }
+  }
+  @override
+  // Fetch participants by race ID
+  Future<List<Participant>> getParticipantsByRaceID(int raceId) async {
+    final response = await http.post(Uri.parse('$baseUrl/race/$raceId/participant'));
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body);
+      return data.map((e) => ParticipantDto.fromJson(e)).toList(); // Use ParticipantDto to parse
+    } else {
+      throw Exception("Failed to load participants");
+    }
+  }
+  @override
+  // Start race
+  Future<void> startRace(int id) async {
+    final response = await http.post(Uri.parse('$baseUrl/race/$id/startRace'));
+    if (response.statusCode != 200) {
+      throw Exception("Failed to start race");
+    }
+  }
+  @override
+  // End race
+  Future<void> endRace(int id) async {
+    final response = await http.post(Uri.parse('$baseUrl/race/$id/endRace'));
+    if (response.statusCode != 200) {
+      throw Exception("Failed to end race");
+    }
+  }
+  @override
+Future<Race> getRaceByID(int id) async {
+  final response = await http.get(Uri.parse('$baseUrl/races/$id'));
 
-  @override
-  Future<List<Race>> getRaces() {
-    // TODO: implement getRaces
-    throw UnimplementedError();
+  if (response.statusCode == 200) {
+    final json = jsonDecode(response.body);
+    return RaceDto.fromJson(json['data']);
+  } else {
+    throw Exception('Failed to load race');
   }
-
-  @override
-  Future<Race> startRace(int id) {
-    // TODO: implement startRace
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<Race> updateRace(int id, race) {
-    // TODO: implement updateRace
-    throw UnimplementedError();
-  }
+}
   
-
+ 
 }

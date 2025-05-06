@@ -2,9 +2,9 @@ import 'package:unitime/domain/model/participant.dart';
 import 'package:unitime/domain/model/segment.dart';
 
 enum RaceStatus {
-  pending("Pending"),
-  inProgress("InProgress"),
-  completed("Completed");
+  pending("pending"),
+  inProgress("inProgress"),
+  completed("completed");
 
   final String label;
   const RaceStatus(this.label);
