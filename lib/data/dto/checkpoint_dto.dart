@@ -10,17 +10,13 @@ class CheckpointDto {
       'update_at': checkpoint.updateAt.toIso8601String()
     };
 
-    if (checkpoint.id != null) {
-      data['id'] = checkpoint.id;
-    }
-    return data;
+    data['id'] = checkpoint.id;
+      return data;
   }
 
   static Checkpoint fromJson(Map<String, dynamic> json) {
     return Checkpoint(
-        id: json['id'] != null 
-          ? int.tryParse(json['id'].toString()) 
-          : null,
+        id: json['id'],
         segmentId: int.parse(json['segment_id']),
         participantId: int.parse(json['participant_id']),
         checkpointTime: DateTime.parse(json['checkpoint_time']),

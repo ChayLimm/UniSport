@@ -5,6 +5,7 @@ import 'package:unitime/domain/services/race_service.dart';
 import 'package:unitime/presentation/provider/race_provider.dart';
 import 'package:unitime/presentation/themes/theme.dart';
 import 'package:unitime/presentation/views/home_screen/home_screen.dart';
+import 'package:unitime/presentation/views/leaderboard_screen/leaderboard_screen.dart';
 import 'package:unitime/presentation/views/race_segment_screen/race_segment_screen.dart';
 
 

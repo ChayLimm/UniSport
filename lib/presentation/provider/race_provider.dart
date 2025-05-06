@@ -5,11 +5,21 @@ import 'package:unitime/domain/services/race_service.dart';
 
 class RaceProvider extends ChangeNotifier {
   int? _elapsedMilliseconds;
+
   Timer? _timer;
+
+  List<ParticipantDuration> currentLeaderboard = [];
 
   int get elapsedMilliseconds => _elapsedMilliseconds?? 0;
   Future<List<Race>> get racelist => RaceService.instance.getRace();
   Race? seletectedRace;
+
+  Future<List<Race> >getAllRace()async{
+    final result = await RaceService.instance.getRace();
+    return result;
+  }
+
+  
 
   void setRace(Race race){
     seletectedRace= race;
@@ -43,6 +53,12 @@ class RaceProvider extends ChangeNotifier {
     // }
     RaceService.instance.endRace(raceID);
     stop();
+  }
+
+  Future<void> getLeaderBoardForRace(int id)async{
+    final data = await  RaceService.instance.getLeaderBoardForRace(id);
+    currentLeaderboard = data;
+    notifyListeners();
   }
 
 

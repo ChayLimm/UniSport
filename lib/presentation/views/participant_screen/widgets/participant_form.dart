@@ -74,8 +74,8 @@ class _ParticipantFormState extends State<ParticipantForm> {
       final formatBib = 'BIB $bibNumber';
 
       final participant = Participant(
-        id: widget.participant?.id, // new id will generate in db-auto incresa
-        raceId: widget.race.id!,
+        id: widget.participant!.id, // new id will generate in db-auto incresa
+        raceId: widget.race.id,
         userName: userName,
         bibNumber: formatBib,
         description: description,

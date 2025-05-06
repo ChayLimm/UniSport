@@ -1,7 +1,7 @@
 import 'package:unitime/domain/model/checkpoint.dart';
 
 class Participant {
-  final int? id; // primary key
+  final int id; // primary key
   final int raceId; // fk
   final String userName;
   final String bibNumber;
@@ -12,7 +12,7 @@ class Participant {
   final List<Checkpoint>? checkpoints;
 
   Participant({
-    this.id, 
+    required this.id, 
     required this.raceId, 
     required this.userName, 
     required this.bibNumber, 
