@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:unitime/domain/model/participant.dart';
-import 'package:unitime/domain/model/race.dart';
+import 'package:unitime/domain/services/race_service.dart';
 import 'package:unitime/presentation/provider/participant_provider.dart';
+import 'package:unitime/presentation/provider/race_provider.dart';
 import 'package:unitime/presentation/themes/theme.dart';
 import 'package:unitime/presentation/utils/time_convertor.dart';
 import 'package:unitime/presentation/views/participant_screen/participant_form_dialog.dart';
 import 'package:unitime/presentation/views/participant_screen/widgets/participant_header.dart';
 import 'package:unitime/presentation/views/participant_screen/widgets/participant_list.dart';
+import 'package:unitime/presentation/views/race_segment_screen/race_segment_screen.dart';
 import 'package:unitime/presentation/widgets/UniButton.dart';
+import 'package:unitime/presentation/widgets/confirmation_dialog.dart';
 import 'package:unitime/presentation/widgets/uni_app_bar.dart';
 
 class ParticipantsScreen extends StatefulWidget {
@@ -19,54 +21,13 @@ class ParticipantsScreen extends StatefulWidget {
 }
 
 class _ParticipantsScreenState extends State<ParticipantsScreen> {
-  // dummy data
-  final Race race = Race(
-      id: 01,
-      name: 'Summer Race Competition',
-      description: 'Nothing',
-      status: RaceStatus.pending,
-      createAt: DateTime.now(),
-      updateAt: DateTime.now());
-
-  final List<Participant> participants = [
-    Participant(
-        id: 01,
-        raceId: 01,
-        userName: 'User',
-        bibNumber: 'BIB 001',
-        registerTime: DateTime.now(),
-        createAt: DateTime.now(),
-        updateAt: DateTime.now()),
-    Participant(
-        id: 02,
-        raceId: 01,
-        userName: 'User',
-        bibNumber: 'BIB 002',
-        registerTime: DateTime.now(),
-        createAt: DateTime.now(),
-        updateAt: DateTime.now()),
-    Participant(
-        id: 03,
-        raceId: 01,
-        userName: 'User',
-        bibNumber: 'BIB 002',
-        registerTime: DateTime.now(),
-        createAt: DateTime.now(),
-        updateAt: DateTime.now()),
-    Participant(
-        id: 04,
-        raceId: 01,
-        userName: 'User',
-        bibNumber: 'BIB 003',
-        registerTime: DateTime.now(),
-        createAt: DateTime.now(),
-        updateAt: DateTime.now()),
-  ];
-
+ 
   @override
   Widget build(BuildContext context) {
-    final participants =
-        context.watch<ParticipantProvider>().participants; // get participants
+    final raceProvider = context.watch<RaceProvider>();
+    final participants =raceProvider.currentParticipant; // get participants
+    final race = raceProvider.seletectedRace; // get participants
+
     return Scaffold(
       backgroundColor: UniColor.backGroundColor,
       body: Padding(
@@ -74,12 +35,13 @@ class _ParticipantsScreenState extends State<ParticipantsScreen> {
           child: Column(children: [
             // app bar for race section
             UniAppBar(
-                title: race.name,
+                title: race!.name,
                 subTitle: DateTimeUtils.formatDateTime(race.createAt),
                 onTapBack: () {
                   // navigate back
                   Navigator.pop(context);
-                }),
+                }
+              ),
 
             const SizedBox(height: 12),
 
@@ -118,11 +80,22 @@ class _ParticipantsScreenState extends State<ParticipantsScreen> {
             MouseRegion(
               cursor: SystemMouseCursors.click,
               child: UniButton(
-                  onTrigger: () {},
-                  color: UniColor.primary,
-                  label: "Start Race"),
+                  onTrigger: ()async {
+                    bool isConfirm = await showConfirmationDialog(context: context,title: "Are you sure?",content: "You want to start the race?");
+                    if(isConfirm){
+                      raceProvider.startRace(race.id);
+                      Navigator.push(context, MaterialPageRoute(builder: (context){
+                        return RaceSegmentScreen();
+                      }));
+                    }
+                  },
+                  color: UniColor.primary,    
+                  label: "Start Race"
+                  ),
             )
-          ])),
+          ]
+        )
+       ),
     );
   }
 }

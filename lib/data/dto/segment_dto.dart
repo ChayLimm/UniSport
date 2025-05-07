@@ -9,6 +9,7 @@ class SegmentDto {
         'description': segment.description,
         'name': segment.name,
         'orderNumber': segment.orderNumber,
+        'mark_as_finish' : segment.markAsFinish
       };
     }
 
@@ -21,7 +22,9 @@ class SegmentDto {
         description: json['description'],
         name: json['name'],
         orderNumber: json['orderNumber'],
-        checkpoint: null);
+        checkpoint: null,
+        markAsFinish: json['mark_as_finish']
+        );
   }
 
   // for nested with checkpoint

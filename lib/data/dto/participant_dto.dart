@@ -11,25 +11,33 @@ class ParticipantDto {
       'register_time': participant.registerTime.toIso8601String(),
       'create_at': participant.createAt.toIso8601String(),
       'update_at': participant.updateAt.toIso8601String(),
+      'age' : participant.age,
+      'gender' : participant.gender
     };
 
 
-    data['id'] = participant.id;
-      return data;
+    json['id'] = participant.id;
+    return json;
   }
 
   // convert JSON to model
   static Participant fromJson(Map<String, dynamic> json) {
     return Participant(
-        id: json['id'],
-        raceId: int.parse(json['race_id']),
-        userName: json['username'],
-        bibNumber: json['bib_number'],
-        registerTime: DateTime.parse(json['register_time']),
-        createAt: DateTime.parse(json['create_at']),
-        updateAt: DateTime.parse(json['update_at']),
-        checkpoints: null);
+      id: json['id'],
+      raceId: int.parse(json['race_id'].toString()), // in case it's a string
+      userName: json['username'],
+      bibNumber: json['bib_number'],
+      registerTime: json['register_time'] != null
+          ? DateTime.parse(json['register_time'])
+          : DateTime.parse(json['created_at']), // fallback or default
+      createAt: DateTime.parse(json['created_at']),
+      updateAt: DateTime.parse(json['updated_at']),
+      checkpoints: null,
+      gender: json['gender'],
+      age: json['age'],
+    );
   }
+
 
   // for nested with checkpoint
 }

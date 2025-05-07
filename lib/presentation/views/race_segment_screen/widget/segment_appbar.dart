@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:unitime/domain/model/race.dart';
 import 'package:unitime/presentation/themes/theme.dart';
 import 'package:unitime/presentation/utils/time_convertor.dart';
+import 'package:unitime/presentation/views/home_screen/home_screen.dart';
 
 class SegmentAppBar extends StatelessWidget {
   final Race race;
@@ -21,7 +22,9 @@ class SegmentAppBar extends StatelessWidget {
         contentPadding: EdgeInsets.zero,
         leading: IconButton(
           onPressed: (){
-
+          Navigator.push(context, MaterialPageRoute(builder: (context){
+            return HomeScreen();
+          }));
         }, 
         icon: Icon(
           Icons.arrow_back_ios_new_outlined,

@@ -1,5 +1,3 @@
-import 'dart:convert';
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:unitime/domain/model/checkpoint.dart';
@@ -24,6 +22,17 @@ class RaceService {
   }
  } 
 
+  Future<List<Participant>> getParticipantsByRaceID(int raceID)async{
+  try{
+    print("start fetching participants for race id : $raceID");
+    final data = await _repository!.getParticipantsByRaceID(raceID);
+    print("done");
+    return data;
+  }catch (e){
+    rethrow;
+  }
+ }
+
   static void initialize(RaceRepository repo) {
     if (_instance == null) {
       _instance = RaceService._internal(repo);
@@ -32,19 +41,20 @@ class RaceService {
     }
   }
 
+  Future<Race> getRaceByID(int raceID)async{
+    final race = await _repository!.getRaceByID(raceID);
+    return race;
+  }
+
   Future<List<Race>> getRace() async {
    final temp = await _repository!.getRaces();
    return temp;
   }
 
-  int? getStartDuration(Race race) {
+  int? getStartDuration(DateTime startTime) {
     late Duration duration;
-    if(race.startTime != null){
-      duration = DateTime.now().difference(race.startTime!);
-    }else{
-      return null;
-    }
-    return duration.inMilliseconds;
+    duration = DateTime.now().difference(startTime!);
+      return duration.inMilliseconds;
   }
   void startRace(int raceID){
     _repository!.startRace(raceID);

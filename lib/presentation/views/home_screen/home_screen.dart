@@ -33,9 +33,10 @@ class _HomeScreenState extends State<HomeScreen> {
     
     if (allRaces.isNotEmpty) {
       raceProvider.setRace(allRaces[0]);
-      print("fetching segment");
+      print("🤣selected race : ${raceProvider.seletectedRace!.id}");
+      print("fetching segment for race id : ${allRaces[0].id}");
       final segments = await RaceService.instance.getSegmentByRace(allRaces[0].id);
-
+     
       setState(() {
         race = allRaces;
         segmentlist = segments;

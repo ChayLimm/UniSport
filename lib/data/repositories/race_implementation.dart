@@ -11,7 +11,7 @@ import 'package:unitime/domain/model/checkpoint.dart';
 import 'package:unitime/domain/repositories/race_repository.dart';
 
 
-const String baseUrl = "http://127.0.0.1:8001/api"; // Replace with your actual base URL
+const String baseUrl = "http://127.0.0.1:8000/api"; // Replace with your actual base URL
 
 class RaceImplementation extends RaceRepository {
   // Fetch all races
@@ -85,16 +85,17 @@ class RaceImplementation extends RaceRepository {
     }
   }
   @override
-Future<Race> getRaceByID(int id) async {
-  final response = await http.get(Uri.parse('$baseUrl/races/$id'));
+  Future<Race> getRaceByID(int id) async {
+    final response = await http.get(Uri.parse('$baseUrl/race/$id'));
 
-  if (response.statusCode == 200) {
-    final json = jsonDecode(response.body);
-    return RaceDto.fromJson(json['data']);
-  } else {
-    throw Exception('Failed to load race');
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      Race result =  RaceDto.fromJson(data);
+      return result; // Use RaceDto to parse
+
+    } else {
+      throw Exception("Failed to load races");
+    }
   }
-}
-  
- 
+    
 }

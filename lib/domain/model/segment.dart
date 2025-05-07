@@ -6,9 +6,11 @@ class Segment {
   final String? description; // for distance in each segment
   final String name;
   final int orderNumber;
+  bool markAsFinish;
   final Checkpoint? checkpoint;
 
   Segment({
+    required this.markAsFinish,
     required this.id, 
     required this.raceId, 
     required this.description, 
