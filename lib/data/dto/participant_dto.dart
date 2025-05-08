@@ -13,9 +13,8 @@ class ParticipantDto {
       'update_at': participant.updateAt.toIso8601String(),
     };
 
-
-    data['id'] = participant.id;
-      return data;
+    json['id'] = participant.id;
+    return json;
   }
 
   // convert JSON to model

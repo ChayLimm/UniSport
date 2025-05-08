@@ -62,6 +62,7 @@ class RaceService {
       rethrow;
     }
   }
+   
 
   Future<List<ParticipantDuration>> getLeaderBoardForRace(int id) async{
     final List<Segment> segmentList = await getSegmentByRace(id);

@@ -6,7 +6,7 @@ import 'package:unitime/presentation/provider/race_provider.dart';
 import 'package:unitime/presentation/themes/theme.dart';
 import 'package:unitime/presentation/views/race_segment_screen/widget/segment_appbar.dart';
 import 'package:unitime/presentation/views/race_segment_screen/widget/segment_card.dart';
-import 'package:unitime/presentation/views/race_segment_screen/widget/timer.dart';
+import 'package:unitime/presentation/widgets/timer.dart';
 import 'package:unitime/presentation/widgets/UniButton.dart';
 import 'package:unitime/presentation/widgets/label.dart';
 import 'package:unitime/presentation/widgets/uni_bottomnav.dart';
