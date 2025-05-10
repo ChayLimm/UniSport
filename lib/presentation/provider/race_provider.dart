@@ -17,6 +17,16 @@ class RaceProvider extends ChangeNotifier {
   Future<List<Race>> get racelist => RaceService.instance.getRace();
   Race? seletectedRace;
 
+  Future<void>markSegmentFinish(int segmentID)async{
+    RaceService.instance.markSegmentFinish(segmentID);
+    for(Segment segment in currentSegment){
+      if(segment.id == segmentID){
+        segment.markAsFinish = true;
+      }
+    }
+  
+  }
+
   Future<void>startRace(int raceID)async{
       RaceService.instance.startRace(raceID);
       final race = await RaceService.instance.getRaceByID(seletectedRace!.id);
@@ -43,10 +53,10 @@ class RaceProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setRace(Race race){
+  Future<void> setRace(Race race)async{
     seletectedRace= race;
-    getParticipantsByRaceID(race.id);
-    getSegmentsByRaceID(race.id);
+    await getParticipantsByRaceID(race.id);
+    await getSegmentsByRaceID(race.id);
     notifyListeners();
   }
 
@@ -72,8 +82,8 @@ class RaceProvider extends ChangeNotifier {
     stop();
   }
 
-  Future<void> getLeaderBoardForRace(int id)async{
-    final data = await  RaceService.instance.getLeaderBoardForRace(id);
+  Future<void> getLeaderBoardForRace(BuildContext context,int id)async{
+    final data = await  RaceService.instance.getLeaderBoardForRace(context,id);
     currentLeaderboard = data;
     notifyListeners();
   }

@@ -15,7 +15,6 @@ class ParticipantDto {
       'gender' : participant.gender
     };
 
-
     json['id'] = participant.id;
     return json;
   }

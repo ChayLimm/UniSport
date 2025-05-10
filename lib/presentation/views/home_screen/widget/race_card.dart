@@ -5,30 +5,41 @@ import 'package:provider/provider.dart';
 import 'package:unitime/domain/model/race.dart';
 import 'package:unitime/presentation/provider/race_provider.dart';
 import 'package:unitime/presentation/themes/theme.dart';
+import 'package:unitime/presentation/views/leaderboard_screen/leaderboard_screen.dart';
 import 'package:unitime/presentation/views/participant_screen/participants_screen.dart';
 import 'package:unitime/presentation/views/race_segment_screen/race_segment_screen.dart';
 
 class RaceCard extends StatelessWidget {
-  final Race race;
-  const RaceCard({
-    super.key,
-    required this.race,
-  });
+ 
+  Race? race;
 
-  void pushScreen(BuildContext context){
-     if(race.startTime ==null){
+
+  Future<void> pushScreen(BuildContext context)async{
+    final raceProvider = context.read<RaceProvider>();
+    final allRaces = await raceProvider.getAllRace();
+   raceProvider.setRace(allRaces[0]);
+   race = raceProvider.seletectedRace;
+   
+    if(race!.startTime != null && race!.endTime != null){
+       Navigator.push(context, MaterialPageRoute(builder: (context)=>LeaderboardScreen(
+        )));
+    }else
+     if(race!.startTime ==null){
         Navigator.push(context, MaterialPageRoute(builder: (context)=>ParticipantsScreen(
         )));}else{
         Navigator.push(context, MaterialPageRoute(builder: (context)=>RaceSegmentScreen( )));
-        }
+      }
   }
 
   @override
   Widget build(BuildContext context) {
     final participants = context.watch<RaceProvider>().currentParticipant;
+        final raceProvider = context.read<RaceProvider>();
+
+    race = raceProvider.seletectedRace;
     return GestureDetector(
-      onTap:(){ 
-        pushScreen(context);
+      onTap:()async{ 
+       await pushScreen(context);
         },
       child: Container(
         width: double.infinity,
@@ -38,8 +49,7 @@ class RaceCard extends StatelessWidget {
         ),
         child: GestureDetector(
           onTap: () {
-                    pushScreen(context);
-            
+            pushScreen(context);
           },
           child: Stack(
             children: [
@@ -50,11 +60,11 @@ class RaceCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      race.name,
+                      race!.name,
                       style: UniTextStyles.body.copyWith(color: UniColor.white),
                     ),
                     Text(
-                      'Hosted by ${race.description}',
+                      'Hosted by ${race?.description ?? "none"}',
                       style: UniTextStyles.body.copyWith(color: UniColor.grayDark)
                     ),
                     const SizedBox(height: 25),
@@ -76,7 +86,7 @@ class RaceCard extends StatelessWidget {
                     color: UniColor.primary,
                     padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 16),
                     child: Text(
-                      race.startTime != null ? DateFormat('MMM dd, yyyy').format(race.startTime!) : "Not start yet",
+                      race!.startTime != null ? DateFormat('MMM dd, yyyy').format(race!.startTime!) : "Not start yet",
                       style: UniTextStyles.label.copyWith(color: UniColor.white, fontWeight: FontWeight.bold),
                     ),
                   ),

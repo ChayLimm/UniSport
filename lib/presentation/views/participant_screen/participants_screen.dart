@@ -104,7 +104,6 @@ class _ParticipantsScreenState extends State<ParticipantsScreen> {
 
 
 
-
 // widget participant header with add
 // Widget _buildParticipantsHeader(
 //   BuildContext context, 

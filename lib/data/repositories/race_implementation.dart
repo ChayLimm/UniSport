@@ -97,5 +97,12 @@ class RaceImplementation extends RaceRepository {
       throw Exception("Failed to load races");
     }
   }
+  
+  @override
+  Future<void> markSegmentFinish(int segmentID) async {
+    // TODO: implement markSegmentFinish
+    await http.post(Uri.parse('$baseUrl/race/$segmentID/segments-finish'));
+    return;
+  }
     
 }

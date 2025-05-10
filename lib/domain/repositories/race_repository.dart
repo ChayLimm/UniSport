@@ -32,4 +32,6 @@ abstract class RaceRepository<T>{
   //function to fetch checkpoint
   Future<List<Checkpoint>> getCheckPointBySegmentID(int id);
   Future<List<Segment>> getSegmentByRaceID(int id);
+
+  Future<void> markSegmentFinish(int segment);
 }
