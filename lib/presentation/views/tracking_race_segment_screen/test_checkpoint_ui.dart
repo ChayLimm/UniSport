@@ -9,21 +9,42 @@ class TestCheckpointScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Checkpoint Test')),
       body: Center(
-        child: ElevatedButton(
-          child: const Text('Edit Checkpoint'),
-          onPressed: () {
-            showDialogModifyCheckpoin(
-              context: context,
-              currentBib: 'BIB001',
-              finishTime: DateTime.now(),
-              filterBIBs: ['BIB001', 'BIB002', 'BIB003'],
-              onSaved: (newBib) {
-                // For now, just print the result
-                debugPrint('Saved BIB: $newBib');
-                // debugPrint('Saved Note: $newNote');
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Edit Checkpoint Button
+            ElevatedButton(
+              child: const Text('Edit Checkpoint'),
+              onPressed: () {
+                showDialogModifyCheckpoint(
+                  context: context,
+                  currentBib: 'BIB001',
+                  finishTime: DateTime.now(),
+                  filterBIBs: ['BIB001', 'BIB002', 'BIB003'],
+                  onSaved: (newBib) {
+                    debugPrint('Saved BIB (Edit): $newBib');
+                  },
+                );
               },
-            );
-          },
+            ),
+            const SizedBox(height: 20),
+
+            // 2-Step Record Button
+            ElevatedButton(
+              child: const Text('2-Step Record'),
+              onPressed: () {
+                showDialogModifyCheckpoint(
+                  context: context,
+                  finishTime: DateTime.now(),
+                  filterBIBs: ['BIB004', 'BIB005', 'BIB006'],
+                  onSaved: (newBib) {
+                    debugPrint('Saved BIB (2-Step): $newBib');
+                  },
+                  isTwoStepRecord: true,
+                );
+              },
+            ),
+          ],
         ),
       ),
     );

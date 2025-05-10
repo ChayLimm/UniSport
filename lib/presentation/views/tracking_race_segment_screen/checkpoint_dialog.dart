@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:unitime/presentation/themes/theme.dart';
 import 'package:unitime/presentation/views/tracking_race_segment_screen/widgets/checkpoint_form.dart';
 
-Future<void> showDialogModifyCheckpoin({
+
+Future<void> showDialogModifyCheckpoint({
   required BuildContext context,
-  required String currentBib,
+  String? currentBib,
   required DateTime finishTime,
   required List<String> filterBIBs,
   required void Function(String newBib) onSaved,
+  bool isTwoStepRecord = false  
 }) async {
   await showDialog(
     context: context,
@@ -17,8 +19,9 @@ Future<void> showDialogModifyCheckpoin({
         appBar: AppBar(
           backgroundColor: UniColor.backGroundColor,
           automaticallyImplyLeading: false,
-          title: Text('Edit Finished BIB',
-          style: UniTextStyles.heading.copyWith(fontSize: 16, fontWeight: FontWeight.w500),
+          title: Text(
+            isTwoStepRecord ? 'Record BIB' : 'Edit Finished BIB',
+            style: UniTextStyles.heading.copyWith(fontSize: 16, fontWeight: FontWeight.w500),
           ),
           actions: [
             Padding(
@@ -44,6 +47,7 @@ Future<void> showDialogModifyCheckpoin({
             onSave: (newBib) {
               onSaved(newBib); // Save callback 
             },
+            isTwoStepRecord: isTwoStepRecord, // to check if edit / 2 step record bib
           ),
         ),
       ),
