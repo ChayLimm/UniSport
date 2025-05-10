@@ -4,6 +4,7 @@ import 'package:unitime/data/dto/checkpoint_dto.dart';
 import 'package:unitime/data/dto/participant_dto.dart';
 import 'package:unitime/data/dto/race_dto.dart';
 import 'package:unitime/data/dto/segment_dto.dart';
+import 'package:unitime/data/repositories/base_url.dart';
 import 'package:unitime/domain/model/race.dart';
 import 'package:unitime/domain/model/segment.dart';
 import 'package:unitime/domain/model/participant.dart';
@@ -11,18 +12,19 @@ import 'package:unitime/domain/model/checkpoint.dart';
 import 'package:unitime/domain/repositories/race_repository.dart';
 
 
-const String baseUrl = "http://127.0.0.1:8000/api"; // Replace with your actual base URL
+// const String baseUrl = "https://1be5-175-100-11-109.ngrok-free.app/api"; // Replace with your actual base URL
 
 class RaceImplementation extends RaceRepository {
+  final String baseUrl = baseUrl1;//'https://1be5-175-100-11-109.ngrok-free.app/api'; // url http for api call
   // Fetch all races
   @override
   Future<List<Race>> getRaces() async {
     final response = await http.get(Uri.parse('$baseUrl/race'));
     if (response.statusCode == 200) {
-      print("fecting form cloud");
+      print("fecting form cloud ${response.body}");
       final decoded = jsonDecode(response.body);
       final List<dynamic> data = decoded['data'];     
-      // print(data);
+      print(data);
       List<Race> result = data.map((e) => RaceDto.fromJson(e)).toList();
       print("done : $result");
       return result; // Use RaceDto to parse

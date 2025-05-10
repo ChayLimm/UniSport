@@ -2,11 +2,12 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:unitime/data/dto/participant_dto.dart';
+import 'package:unitime/data/repositories/base_url.dart';
 import 'package:unitime/domain/model/participant.dart';
 import 'package:unitime/domain/repositories/participant_repository.dart';
 
 class ParticipantImplement implements ParticipantRepository {
-  final String baseUrl = 'http://127.0.0.1:8000/api'; // url http for api call
+  final String baseUrl = baseUrl1;//'https://1be5-175-100-11-109.ngrok-free.app/api'; // url http for api call
 
   @override
   Future<List<Participant>> getAllParticipants() async {

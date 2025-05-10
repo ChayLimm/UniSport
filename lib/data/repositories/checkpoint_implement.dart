@@ -3,11 +3,13 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:unitime/data/dto/checkpoint_dto.dart';
+import 'package:unitime/data/repositories/base_url.dart';
+import 'package:unitime/data/repositories/race_implementation.dart';
 import 'package:unitime/domain/model/checkpoint.dart';
 import 'package:unitime/domain/repositories/checkpoing_repository.dart';
 
 class CheckpointImplement extends CheckpointRepository {
-  final String baseUrl = 'http://127.0.0.1:8000/api'; // url http for api call
+  final String baseUrl = baseUrl1;//'https://1be5-175-100-11-109.ngrok-free.app/api'; // url http for api call
 
 
   @override

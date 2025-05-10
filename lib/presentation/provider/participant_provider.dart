@@ -37,4 +37,11 @@ class ParticipantProvider extends ChangeNotifier {
     participantList.removeWhere((e) => e.id == id);
     notifyListeners();
   }
+
+  // function to search participant by bib number
+  List<Participant> searchParticipants(String query, List<Participant> participantList) {
+  return participantList.where((participant) {
+    return participant.bibNumber.toLowerCase().contains(query.toLowerCase());
+  }).toList();
+}
 }

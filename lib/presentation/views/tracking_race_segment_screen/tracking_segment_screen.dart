@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:unitime/domain/model/participant.dart';
 import 'package:unitime/domain/model/segment.dart';
 import 'package:unitime/presentation/provider/checkpoint_provider.dart';
+import 'package:unitime/presentation/provider/participant_provider.dart';
 import 'package:unitime/presentation/provider/race_provider.dart';
 import 'package:unitime/presentation/themes/theme.dart';
 import 'package:unitime/presentation/views/tracking_race_segment_screen/widget/finished_bib_number.dart';
@@ -19,50 +20,65 @@ class TrackingRaceSegmentScreen extends StatefulWidget {
   const TrackingRaceSegmentScreen({super.key, required this.segment});
 
   @override
-  State<TrackingRaceSegmentScreen> createState() => _TrackingRaceSegmentScreenState();
+  State<TrackingRaceSegmentScreen> createState() =>
+      _TrackingRaceSegmentScreenState();
 }
 
 class _TrackingRaceSegmentScreenState extends State<TrackingRaceSegmentScreen> {
-    @override
-    void initState() {
-      super.initState();
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _initAsync();
-      });
-    }
+  List<Participant> filteredParticipants = [];
+  TextEditingController searchController = TextEditingController();
+  bool isSearching = false;
+  @override
+  void initState() {
+    super.initState();
+    searchController.addListener(_onSearchChanged);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initAsync();
+    });
+  }
 
-    Future<void> _initAsync() async {
-      final raceProvider = Provider.of<RaceProvider>(context, listen: false);
+  void dispose() {
+    searchController.removeListener(_onSearchChanged);
+    searchController.dispose();
+    super.dispose();
+  }
 
-      raceProvider.start(raceProvider.seletectedRace!.startTime!);
+  void _onSearchChanged() {
+    setState(() {
+      isSearching = searchController.text.isNotEmpty;
+    });
+  }
 
-     await checkSegmentIfFinish();
-    }
+  Future<void> _initAsync() async {
+    final raceProvider = Provider.of<RaceProvider>(context, listen: false);
 
-  Future<void> checkSegmentIfFinish()async{
+    raceProvider.start(raceProvider.seletectedRace!.startTime!);
+
+    await checkSegmentIfFinish();
+  }
+
+  Future<void> checkSegmentIfFinish() async {
     // Fetch checkpoints
-      final checkpointProvider = Provider.of<CheckpointProvider>(context, listen: false);
-      final raceProvider = Provider.of<RaceProvider>(context, listen: false);
+    final checkpointProvider = Provider.of<CheckpointProvider>(context, listen: false);
+    final raceProvider = Provider.of<RaceProvider>(context, listen: false);
 
-      await checkpointProvider.getCheckpointsBySegmentId(widget.segment.id);
-      print("Checkpoint = ${checkpointProvider.checkpoints.length}");
+    await checkpointProvider.getCheckpointsBySegmentId(widget.segment.id);
+    print("Checkpoint = ${checkpointProvider.checkpoints.length}");
 
-      // Check if segment is finished
-      int size = raceProvider.currentParticipant.length;
-      print("This is the checkpoint size: ${checkpointProvider.checkpoints.length}");
-      print("Total size: $size");
-      if (size == checkpointProvider.checkpoints.length) {
-        raceProvider.markSegmentFinish(widget.segment.id);
-      }
+    // Check if segment is finished
+    int size = raceProvider.currentParticipant.length;
+    print(
+        "This is the checkpoint size: ${checkpointProvider.checkpoints.length}");
+    print("Total size: $size");
+    if (size == checkpointProvider.checkpoints.length) {
+      raceProvider.markSegmentFinish(widget.segment.id);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-
     final raceProvider = Provider.of<RaceProvider>(context, listen: false);
-    TextEditingController myController = TextEditingController();
-    List<Participant> participants = raceProvider.currentParticipant;
-
+    List<Participant> participants = isSearching? filteredParticipants:raceProvider.currentParticipant;// if searching then it returns filterParticipant and if not then it returns normal participant list 
     return Scaffold(
       backgroundColor: Colors.black,
       body: Padding(
@@ -71,8 +87,8 @@ class _TrackingRaceSegmentScreenState extends State<TrackingRaceSegmentScreen> {
           children: [
             UniAppbar(
               race: raceProvider.seletectedRace!,
-              tirggerNavigator: (){
-                 Navigator.pop(context);
+              tirggerNavigator: () {
+                Navigator.pop(context);
               },
             ),
             const SizedBox(height: 10),
@@ -81,15 +97,13 @@ class _TrackingRaceSegmentScreenState extends State<TrackingRaceSegmentScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Label(
-                  label: "Participants"
-
-                ),
+                Label(label: "Participants"),
                 Expanded(child: SizedBox(width: 100)),
                 CustomSearchbar(
-                  controller: myController,
+                  controller: searchController,
                   onChanged: (value) {
-                    print("Search: $value");
+                    final participantprovider=Provider.of<ParticipantProvider>(context,listen: false);
+                    filteredParticipants = participantprovider.searchParticipants(value, participants);
                   },
                 ),
                 const SizedBox(height: 10),
@@ -104,35 +118,44 @@ class _TrackingRaceSegmentScreenState extends State<TrackingRaceSegmentScreen> {
                   children: List.generate(participants.length, (index) {
                     final bibNumber = participants[index].bibNumber;
                     return Consumer2<CheckpointProvider, RaceProvider>(
-                      builder:(context, checkpointProvider, raceProvider, child) {
+                      builder:
+                          (context, checkpointProvider, raceProvider, child) {
                         final isFinished = checkpointProvider.isCompleted(
                           widget.segment.id,
                           participants[index].id!,
                         );
 
                         return InkWell(
-                          onTap: ()async {
+                          onTap: () async {
                             // print("${{segment.name}} $bibNumber tapped");
                             // print("Checkpoint ID: ${segment.id}");
                             if (!isFinished) {
                               // Pass BuildContext to recordCheckpoint method
-                              bool isSuccess = await checkpointProvider.recordCheckpoint(
+                              bool isSuccess =
+                                  await checkpointProvider.recordCheckpoint(
                                 participantId: participants[index].id!,
                                 segmentId: widget.segment.id,
                               );
-                              if(isSuccess){
-                                UniSportSnackbar.show(context: context,message: "Record successfully", backgroundColor: UniColor.primary);
+                              if (isSuccess) {
+                                UniSportSnackbar.show(
+                                    context: context,
+                                    message: "Record successfully",
+                                    backgroundColor: UniColor.primary);
                                 checkpointProvider.refresh();
                                 await checkSegmentIfFinish();
-                              }else{
-                                UniSportSnackbar.show(context: context,message: "Record failed", backgroundColor: UniColor.red);
+                              } else {
+                                UniSportSnackbar.show(
+                                    context: context,
+                                    message: "Record failed",
+                                    backgroundColor: UniColor.red);
                               }
                             }
                           },
                           child: isFinished
                               ? FinishedBibNumber(
                                   bibNumber: bibNumber,
-                                  finishedTime: checkpointProvider.getParticipantCheckpointTime(
+                                  finishedTime: checkpointProvider
+                                      .getParticipantCheckpointTime(
                                     widget.segment.id,
                                     participants[index].id!,
                                   ),
