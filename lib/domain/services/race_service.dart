@@ -1,12 +1,13 @@
-import 'dart:convert';
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:unitime/domain/model/checkpoint.dart';
 import 'package:unitime/domain/model/participant.dart';
 import 'package:unitime/domain/model/race.dart' show Race;
 import 'package:unitime/domain/model/segment.dart';
 import 'package:unitime/domain/repositories/race_repository.dart';
+import 'package:unitime/domain/services/checkpoint_service.dart';
+import 'package:unitime/presentation/provider/race_provider.dart';
 import 'package:unitime/presentation/themes/theme.dart';
 
 class RaceService {
@@ -14,7 +15,6 @@ class RaceService {
   static RaceService? _instance;
   RaceService._internal(this._repository);
 
-  static Race? selectedRace;
 
   static RaceService get instance{
   if(_instance == null){
@@ -24,6 +24,17 @@ class RaceService {
   }
  } 
 
+  Future<List<Participant>> getParticipantsByRaceID(int raceID)async{
+  try{
+    print("start fetching participants for race id : $raceID");
+    final data = await _repository!.getParticipantsByRaceID(raceID);
+    print("done");
+    return data;
+  }catch (e){
+    rethrow;
+  }
+ }
+
   static void initialize(RaceRepository repo) {
     if (_instance == null) {
       _instance = RaceService._internal(repo);
@@ -32,19 +43,24 @@ class RaceService {
     }
   }
 
+  Future<Race> getRaceByID(int raceID)async{
+    final race = await _repository!.getRaceByID(raceID);
+    return race;
+  }
+
   Future<List<Race>> getRace() async {
    final temp = await _repository!.getRaces();
    return temp;
   }
 
-  int? getStartDuration(Race race) {
+  void markSegmentFinish(int segmentID)async{
+    await _repository!.markSegmentFinish(segmentID);
+  }
+
+  int? getStartDuration(DateTime startTime) {
     late Duration duration;
-    if(race.startTime != null){
-      duration = DateTime.now().difference(race.startTime!);
-    }else{
-      return null;
-    }
-    return duration.inMilliseconds;
+    duration = DateTime.now().difference(startTime!);
+      return duration.inMilliseconds;
   }
   void startRace(int raceID){
     _repository!.startRace(raceID);
@@ -62,44 +78,50 @@ class RaceService {
       rethrow;
     }
   }
+   
 
-  Future<List<ParticipantDuration>> getLeaderBoardForRace(int id) async{
-    final List<Segment> segmentList = await getSegmentByRace(id);
+  Future<List<ParticipantDuration>> getLeaderBoardForRace(BuildContext context,int id) async{
+    final raceProvider = context.read<RaceProvider>();
+    final List<Segment> segmentList = raceProvider.currentSegment;
     // check if the race end yet
     Race race = await _repository!.getRaceByID(segmentList.first.raceId);
-    if(race.endTime!= null ){
-       List<Checkpoint> checkpointList = [];
+    if(race.endTime != null ){
+    List<Checkpoint> checkpointList = [];
     // fetching all the checkpoint
-    for(Segment segment in segmentList){
-    final List<Checkpoint> data  = await _repository!.getCheckPointBySegmentID(segment.id!);
-     checkpointList.addAll(data);
-    }
-
+    print("🐞debug 1");
+    final allCheckpoints = await CheckpointService.instance.getAllCheckpoints();
+    checkpointList.addAll(allCheckpoints);
+  
     //fetch all participant
-    final List<Participant> participantList = await _repository!.getParticipantsByRaceID(id);
+    final List<Participant> participantList = raceProvider.currentParticipant;
     //
+
     List<ParticipantDuration> result = [];
 
     for(Participant participant in participantList){
       List<DateTime> participantTime = [];
+
       for(Checkpoint checkpoint in checkpointList){
         if(checkpoint.participantId == participant.id){
           participantTime.add(checkpoint.checkpointTime);
         }
 
       }
+
       participantTime.sort();
-      Duration duration = participantTime.last.difference(participantTime.first);
+      Duration duration = participantTime.last.difference(race.startTime!);
       // coloring
       late Color? color;
       if(participantTime.isEmpty){
         color = UniColor.red;
       }
       else if(participantTime.length != segmentList.length){
-          color = UniColor.yellow;
+        color = UniColor.yellow;
+      }else{
+        color = UniColor.primary;
       }
-
       result.add(ParticipantDuration(bibNumber: participant.bibNumber, username: participant.userName,duration: duration,color:color ));
+      print("🐞debug 2");
 
     }
 

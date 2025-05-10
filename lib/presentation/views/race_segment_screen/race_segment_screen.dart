@@ -2,59 +2,65 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:unitime/domain/model/race.dart';
 import 'package:unitime/domain/model/segment.dart';
+import 'package:unitime/domain/services/race_service.dart';
 import 'package:unitime/presentation/provider/race_provider.dart';
 import 'package:unitime/presentation/themes/theme.dart';
-import 'package:unitime/presentation/views/race_segment_screen/widget/segment_appbar.dart';
+import 'package:unitime/presentation/views/home_screen/home_screen.dart';
+import 'package:unitime/presentation/views/leaderboard_screen/leaderboard_screen.dart';
 import 'package:unitime/presentation/views/race_segment_screen/widget/segment_card.dart';
-import 'package:unitime/presentation/views/race_segment_screen/widget/timer.dart';
+import 'package:unitime/presentation/widgets/timer.dart';
 import 'package:unitime/presentation/widgets/UniButton.dart';
+import 'package:unitime/presentation/widgets/confirmation_dialog.dart';
+import 'package:unitime/presentation/widgets/custom_snackbar.dart';
 import 'package:unitime/presentation/widgets/label.dart';
+import 'package:unitime/presentation/widgets/uni_appbar.dart';
 import 'package:unitime/presentation/widgets/uni_bottomnav.dart';
 
 class RaceSegmentScreen extends StatelessWidget {
-  RaceSegmentScreen({super.key});
+  const RaceSegmentScreen({super.key});
 
-  //dummy data
-  final Race race = Race(
-      id: 1234,
-      name: "Race run lg - olympic",
-      description: "This is the description",
-      status: RaceStatus.pending,
-      createAt: DateTime.now(),
-      updateAt: DateTime.now(),
-      startTime:  DateTime.now().subtract(Duration(hours: 1))
-  );
-  final List<Segment> sampleSegments = [
-    Segment(
-      id: 1,
-      raceId: 101,
-      description: 'Segment 1 Description',
-      name: 'Segment 1',
-      orderNumber: 1,
-      checkpoint: null,
-    ),
-    Segment(
-      id: 2,
-      raceId: 101,
-      description: 'Segment 2 Description',
-      name: 'Segment 2',
-      orderNumber: 2,
-      checkpoint: null,
-    ),
-    Segment(
-      id: 3,
-      raceId: 101,
-      description: 'Segment 3 Description',
-      name: 'Segment 3',
-      orderNumber: 3,
-      checkpoint: null,
-    ),
-  ];
+  Future<void> _onEndRace(BuildContext context)async{
 
+
+
+
+    final raceProvider = context.read<RaceProvider>();
+    
+    //refresh race
+    final allRaces = await raceProvider.getAllRace();
+    raceProvider.setRace(allRaces[0]);
+
+    final segments = await RaceService.instance.getSegmentByRace(raceProvider.seletectedRace!.id);
+
+    bool isConfirm  = await showConfirmationDialog(context: context, title: "Are you sure?", content: "You want to end this race?");
+    if(isConfirm){
+      for(Segment segment in segments){
+        if(!segment.markAsFinish){
+          UniSportSnackbar.show(context: context, message: "${segment.name} have not end yet", backgroundColor: UniColor.red);
+          return;
+        }
+    
+    }
+      raceProvider.endRace(raceProvider.seletectedRace!.id);
+      Navigator.push(context, MaterialPageRoute(builder: (context){
+        return LeaderboardScreen();
+      }));
+    }
+  }
+
+  
   @override
   Widget build(BuildContext context) {
-    final raceProvider = context.read<RaceProvider>();
-    raceProvider.start(race);
+    ///
+    ///Render data
+    ///
+   
+    final raceProvider = context.watch<RaceProvider>();
+    final race = raceProvider.seletectedRace ?? Race(id: 12, name: "name", description: "description", status: RaceStatus.pending, createAt: DateTime.now(), updateAt: DateTime.now());
+    final segments = raceProvider.currentSegment;
+    raceProvider.start(race.startTime!); 
+    
+    
 
     return Scaffold(
       bottomNavigationBar: UniBottomnav(),
@@ -64,8 +70,13 @@ class RaceSegmentScreen extends StatelessWidget {
         child: Column(
           children: [
             // Custome appbar
-            SegmentAppBar(
+            UniAppbar(
               race: race,
+              tirggerNavigator: (){
+                Navigator.push(context, MaterialPageRoute(builder: (Context){
+                  return HomeScreen();
+                }));
+              },
             ),
             const SizedBox(
               height: 10,
@@ -82,7 +93,7 @@ class RaceSegmentScreen extends StatelessWidget {
             const SizedBox(
               height: 10,
             ),
-            for (Segment segment in sampleSegments) ...[
+            for (Segment segment in segments) ...[
               SegmentCard(segment: segment),
               const SizedBox(
                 height: 10,
@@ -90,11 +101,12 @@ class RaceSegmentScreen extends StatelessWidget {
             ],
             Spacer(),
             UniButton(
-                onTrigger: () {
-                  raceProvider.endRace(race.id);
+                onTrigger: () async {
+                 await _onEndRace(context);
                 },
                 color: UniColor.red,
-                label: "End Race")
+                label: "End Race"
+                )
           ],
         ),
       ),

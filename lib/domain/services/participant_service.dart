@@ -44,7 +44,8 @@ class ParticipantService {
 
   // add new participany
   Future<Participant> addParticipant(Participant p) {
-    return repository.addparticipant(p);
+    final result = repository.addparticipant(p);
+    return result;
   }
 
   // update participant by id, with info participant

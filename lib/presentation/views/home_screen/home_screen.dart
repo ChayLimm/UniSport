@@ -5,7 +5,7 @@ import 'package:unitime/domain/model/segment.dart';
 import 'package:unitime/domain/services/race_service.dart';
 import 'package:unitime/presentation/provider/race_provider.dart';
 import 'package:unitime/presentation/themes/theme.dart';
-import 'package:unitime/presentation/views/home_screen/widget/race_segment_card.dart';
+import 'package:unitime/presentation/views/home_screen/widget/race_card.dart';
 import 'package:unitime/presentation/views/home_screen/widget/segment_card_widget.dart';
 import 'package:unitime/presentation/views/home_screen/widget/unisport_background.dart';
 
@@ -33,9 +33,10 @@ class _HomeScreenState extends State<HomeScreen> {
     
     if (allRaces.isNotEmpty) {
       raceProvider.setRace(allRaces[0]);
-      print("fetching segment");
+      // print("🤣selected race : ${raceProvider.seletectedRace!.id}");
+      // print("fetching segment for race id : ${allRaces[0].id}");
       final segments = await RaceService.instance.getSegmentByRace(allRaces[0].id);
-
+     
       setState(() {
         race = allRaces;
         segmentlist = segments;
@@ -63,7 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
             bottom: 0,
             right: 0,
             child: Container(
-              height: 120,
+              height: 210,
               width: double.infinity,
               color: Colors.black.withOpacity(0.5),
             ),
@@ -86,7 +87,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         if (raceProvider.seletectedRace != null)
-                          RaceCard(race: raceProvider.seletectedRace!),
+                          const SizedBox(height: 10),
+                          RaceCard(),
                         const SizedBox(height: 10),
                         Text(
                           'Segments',

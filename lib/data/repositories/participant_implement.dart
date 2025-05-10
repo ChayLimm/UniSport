@@ -6,7 +6,7 @@ import 'package:unitime/domain/model/participant.dart';
 import 'package:unitime/domain/repositories/participant_repository.dart';
 
 class ParticipantImplement implements ParticipantRepository {
-  final String baseUrl = ''; // url http for api call
+  final String baseUrl = 'http://127.0.0.1:8000/api'; // url http for api call
 
   @override
   Future<List<Participant>> getAllParticipants() async {
@@ -22,26 +22,40 @@ class ParticipantImplement implements ParticipantRepository {
   }
 
   @override
-  Future<Participant> addparticipant(Participant participant) async {
-    final response = await http.post(Uri.parse('$baseUrl/participant'),
-        body: json.encode(ParticipantDto.toJson(participant)),
-        headers: {'Content-Type': 'application/json'});
+Future<Participant> addparticipant(Participant participant) async {
+  try {
+    final body = json.encode(ParticipantDto.toJson(participant));
+    print(body);
+    final response = await http.post(
+      Uri.parse('$baseUrl/createparticipant'),
+      body: body,
+      headers: {'Content-Type': 'application/json'},
+    );
+    print("Respone back : ${response.body}");
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 || response.statusCode == 201) {
       return ParticipantDto.fromJson(json.decode(response.body));
     } else {
-      throw Exception('Failed to add new participant');
+      // Parse the error response if available
+      final errorResponse = json.decode(response.body);
+      throw Exception(
+        'Failed to add participant: ${response.statusCode}\n'
+        'Error: ${errorResponse['message'] ?? errorResponse.toString()}'
+      );
     }
+  } catch (e) {
+    throw Exception('Network error: ${e.toString()}');
   }
+}
 
   @override
   Future<Participant> updateParticipant(Participant participant) async {
-    final response = await http.put(
-      Uri.parse('$baseUrl/participant/${participant.id}'),
-      body: json.encode(ParticipantDto.toJson(participant)),
+    final body =json.encode(ParticipantDto.toJson(participant));
+    final response = await http.post(
+      Uri.parse('$baseUrl/updateparticipant'),
+      body: body,
       headers: {'Content-Type': 'application/json'},
     );
-
     if (response.statusCode == 200) {
       return ParticipantDto.fromJson(json.decode(response.body));
     } else {

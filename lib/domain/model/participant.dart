@@ -6,6 +6,8 @@ class Participant {
   final String userName;
   final String bibNumber;
   final String? description;
+  final String gender;
+  final int age;
   final DateTime registerTime;
   final DateTime createAt;
   final DateTime updateAt;
@@ -19,6 +21,8 @@ class Participant {
     required this.registerTime, 
     required this.createAt, 
     required this.updateAt, 
+    required this.age,
+    required this.gender,
     this.description,
     this.checkpoints,
     });
