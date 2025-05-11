@@ -7,10 +7,10 @@ import 'package:unitime/domain/services/participant_service.dart';
 import 'package:unitime/domain/services/checkpoint_service.dart';
 import 'package:unitime/domain/services/race_service.dart';
 import 'package:unitime/presentation/provider/checkpoint_provider.dart';
+import 'package:unitime/presentation/provider/participant_provider.dart';
 import 'package:unitime/presentation/provider/race_provider.dart';
 import 'package:unitime/presentation/themes/theme.dart';
 import 'package:unitime/presentation/views/home_screen/home_screen.dart';
-import 'presentation/views/tracking_race_segment_screen/tracking_segment_screen.dart';
 
 void main() {
 
@@ -26,6 +26,7 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (_) => RaceProvider()),
         ChangeNotifierProvider(create: (_) => CheckpointProvider()),
+        ChangeNotifierProvider(create: (_) => ParticipantProvider()),
       ],
       child: const MyApp(),
     ),

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:unitime/domain/model/participant.dart';
 import 'package:unitime/domain/model/segment.dart';
 import 'package:unitime/presentation/provider/checkpoint_provider.dart';
+import 'package:unitime/presentation/provider/participant_provider.dart';
 import 'package:unitime/presentation/provider/race_provider.dart';
 import 'package:unitime/presentation/themes/theme.dart';
 import 'package:unitime/presentation/views/tracking_race_segment_screen/widget/finished_bib_number.dart';
@@ -23,14 +24,32 @@ class TrackingRaceSegmentScreen extends StatefulWidget {
 }
 
 class _TrackingRaceSegmentScreenState extends State<TrackingRaceSegmentScreen> {
+  List<Participant> filteredParticipants=[];
+  TextEditingController searchController = TextEditingController();
+  bool isSearching=false;
+
     @override
     void initState() {
       super.initState();
+      searchController.addListener(onSearchChanged);
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _initAsync();
       });
     }
 
+    // Narong code
+    void dispose(){
+      searchController.removeListener(onSearchChanged);
+      searchController.dispose();
+      super.dispose();
+    }
+
+    // Narong code 
+    void onSearchChanged(){
+      setState(() {
+        isSearching = searchController.text.isNotEmpty;
+      });
+    }
     Future<void> _initAsync() async {
       final raceProvider = Provider.of<RaceProvider>(context, listen: false);
 
@@ -60,8 +79,13 @@ class _TrackingRaceSegmentScreenState extends State<TrackingRaceSegmentScreen> {
   Widget build(BuildContext context) {
 
     final raceProvider = Provider.of<RaceProvider>(context, listen: false);
-    TextEditingController myController = TextEditingController();
-    List<Participant> participants = raceProvider.currentParticipant;
+    final participantProvider = Provider.of<ParticipantProvider>(context);
+
+    // kyim code
+    // List<Participant> participants = raceProvider.currentParticipant;
+
+    // Narong code 
+    List<Participant> participants = isSearching ? filteredParticipants:raceProvider.currentParticipant;
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -87,10 +111,11 @@ class _TrackingRaceSegmentScreenState extends State<TrackingRaceSegmentScreen> {
                 ),
                 Expanded(child: SizedBox(width: 100)),
                 CustomSearchbar(
-                  controller: myController,
+                  controller: searchController,
+                  // Narong code
                   onChanged: (value) {
-                    print("Search: $value");
-                  },
+                    filteredParticipants=participantProvider.searchParticipants(value, raceProvider.currentParticipant);
+                    print(participants);                                    },
                 ),
                 const SizedBox(height: 10),
               ],
