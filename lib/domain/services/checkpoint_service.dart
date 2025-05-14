@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:unitime/domain/model/checkpoint.dart';
-import 'package:unitime/domain/repositories/checkpoing_repository.dart';
+import 'package:unitime/domain/repositories/checkpoint_repository.dart';
 
 class CheckpointService {
   CheckpointRepository? _repository;
@@ -20,6 +20,20 @@ class CheckpointService {
     } else {
       return _instance!;
     }
+  }
+
+  Future<void> deleteCheckpoint(int checkpointID) async{
+    await _repository!.deleteCheckpoint(checkpointID);
+  }
+
+  Future<Checkpoint> updateCheckpoint(Checkpoint checkpoint) async{
+    try{
+      final response = await _repository!.updateCheckpoint(checkpoint);
+    return response;
+    }catch (e){
+      rethrow;
+    }
+
   }
 
   // Method to initialize the singleton instance with repository

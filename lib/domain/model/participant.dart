@@ -26,4 +26,14 @@ class Participant {
     this.description,
     this.checkpoints,
     });
+
+    @override
+    bool operator ==(Object other) =>
+        identical(this, other) ||
+        other is Participant &&
+            runtimeType == other.runtimeType &&
+            id == other.id;
+
+    @override
+    int get hashCode => id.hashCode;
 }

@@ -80,12 +80,12 @@ class RaceService {
   }
    
 
-  Future<List<ParticipantDuration>> getLeaderBoardForRace(BuildContext context,int id) async{
-    final raceProvider = context.read<RaceProvider>();
-    final List<Segment> segmentList = raceProvider.currentSegment;
-    // check if the race end yet
-    Race race = await _repository!.getRaceByID(segmentList.first.raceId);
-    if(race.endTime != null ){
+Future<List<ParticipantDuration>> getLeaderBoardForRace(BuildContext context, int id) async {
+  final raceProvider = context.read<RaceProvider>();
+  final List<Segment> segmentList = raceProvider.currentSegment;
+  // check if the race end yet
+  Race race = await _repository!.getRaceByID(segmentList.first.raceId);
+  if (race.endTime != null) {
     List<Checkpoint> checkpointList = [];
     // fetching all the checkpoint
     print("🐞debug 1");
@@ -98,42 +98,75 @@ class RaceService {
 
     List<ParticipantDuration> result = [];
 
-    for(Participant participant in participantList){
+    for (Participant participant in participantList) {
       List<DateTime> participantTime = [];
 
-      for(Checkpoint checkpoint in checkpointList){
-        if(checkpoint.participantId == participant.id){
+      for (Checkpoint checkpoint in checkpointList) {
+        if (checkpoint.participantId == participant.id) {
           participantTime.add(checkpoint.checkpointTime);
         }
-
       }
 
       participantTime.sort();
-      Duration duration = participantTime.last.difference(race.startTime!);
-      // coloring
-      late Color? color;
-      if(participantTime.isEmpty){
+      Duration duration;
+      Color? color;
+      
+      if (participantTime.isEmpty) {
+        // No checkpoints - set duration to 0 and color red
+        duration = Duration.zero;
         color = UniColor.red;
-      }
-      else if(participantTime.length != segmentList.length){
+      } else if (participantTime.length != segmentList.length) {
+        // Incomplete race - color yellow
+        duration = participantTime.last.difference(race.startTime!);
         color = UniColor.yellow;
-      }else{
+      } else {
+        // Complete race - color primary
+        duration = participantTime.last.difference(race.startTime!);
         color = UniColor.primary;
       }
-      result.add(ParticipantDuration(bibNumber: participant.bibNumber, username: participant.userName,duration: duration,color:color ));
+      
+      result.add(ParticipantDuration(
+        bibNumber: participant.bibNumber, 
+        username: participant.userName,
+        duration: duration,
+        color: color
+      ));
       print("🐞debug 2");
-
     }
 
-      result.sort((a, b) => a.duration.compareTo(b.duration));
+    // Sort by:
+    // 1. Complete participants first (sorted by duration)
+    // 2. Incomplete participants next (yellow, sorted by duration)
+    // 3. No-checkpoint participants last (red)
+    result.sort((a, b) {
+      // Both have no checkpoints (red)
+      if (a.color == UniColor.red && b.color == UniColor.red) {
+        return 0; // keep original order
+      }
+      // Only a has no checkpoints (red)
+      else if (a.color == UniColor.red) {
+        return 1; // a goes after b
+      }
+      // Only b has no checkpoints (red)
+      else if (b.color == UniColor.red) {
+        return -1; // a goes before b
+      }
+      // Both are yellow or both are not yellow
+      else if ((a.color == UniColor.yellow && b.color == UniColor.yellow) || 
+          (a.color != UniColor.yellow && b.color != UniColor.yellow)) {
+        return a.duration.compareTo(b.duration);
+      }
+      // One is yellow, the other isn't
+      else {
+        return a.color == UniColor.yellow ? 1 : -1;
+      }
+    });
 
-   return result;
-
-    }else{
-      return [];
-    }
+    return result;
+  } else {
+    return [];
   }
-
+}
 }
 class ParticipantDuration {
   final String bibNumber;

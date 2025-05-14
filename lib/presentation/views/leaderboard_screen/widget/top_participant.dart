@@ -1,12 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:unitime/domain/services/race_service.dart';
 import 'package:unitime/presentation/themes/theme.dart';
 import 'package:unitime/presentation/widgets/label.dart';
+import 'package:unitime/utils/formatter.dart';
 
 class TopParticipant extends StatelessWidget {
-  const TopParticipant({super.key});
+  final ParticipantDuration top1 ;
+  final ParticipantDuration top2 ;
+  final ParticipantDuration top3 ;
+  const TopParticipant({super.key,required this.top1, required this.top2, required this.top3});
 
   @override
   Widget build(BuildContext context) {
+
+    final top1Duration = formatDuration(top1.duration);
+    final top2Duration = formatDuration(top2.duration);
+    final top3Duration = formatDuration(top3.duration);
+
     return Container(
       height: 280,
       decoration: BoxDecoration(
@@ -36,9 +46,9 @@ class TopParticipant extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 5,),
-                  Text("ChayLim",style: UniTextStyles.body,),
+                  Text(top2.username,style: UniTextStyles.body,),
                   SizedBox(height: 5,),
-                  Text("00:05:30",style: UniTextStyles.body,),
+                  Text(top2Duration,style: UniTextStyles.body,),
 
                 ],
               ),
@@ -55,9 +65,9 @@ class TopParticipant extends StatelessWidget {
                     ),
                   ),
                    SizedBox(height: 5,),
-                  Text("ChayLim",style: UniTextStyles.body,),
+                  Text(top1.username,style: UniTextStyles.body,),
                   SizedBox(height: 5,),
-                  Text("00:05:30",style: UniTextStyles.body,),
+                  Text(top1Duration,style: UniTextStyles.body,),
                 ],
               ),
               Column(
@@ -74,9 +84,9 @@ class TopParticipant extends StatelessWidget {
                     ),
                   ),
                    SizedBox(height: 5,),
-                  Text("ChayLim",style: UniTextStyles.body,),
+                  Text(top3.username,style: UniTextStyles.body,),
                   SizedBox(height: 5,),
-                  Text("00:05:30",style: UniTextStyles.body,),
+                  Text(top3Duration,style: UniTextStyles.body,),
                 ],
               )
 

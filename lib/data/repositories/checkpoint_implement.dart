@@ -1,19 +1,21 @@
 import 'dart:async';
 import 'dart:convert';
-
 import 'package:http/http.dart' as http;
 import 'package:unitime/data/dto/checkpoint_dto.dart';
 import 'package:unitime/domain/model/checkpoint.dart';
-import 'package:unitime/domain/repositories/checkpoing_repository.dart';
+import 'package:unitime/domain/repositories/checkpoint_repository.dart';
 
 class CheckpointImplement extends CheckpointRepository {
   final String baseUrl = 'http://127.0.0.1:8000/api'; // url http for api call
 
 
   @override
-  Future<void> deleteCheckpoint() {
+  Future<void> deleteCheckpoint(int checkpointID)async {
     // TODO: implement deleteCheckpoint
-    throw UnimplementedError();
+     await  http.delete(
+        Uri.parse('$baseUrl/checkpoint/$checkpointID'),
+        headers: {'Content-Type': 'application/json'},
+      );
   }
 
   @override
@@ -39,9 +41,24 @@ class CheckpointImplement extends CheckpointRepository {
   }
 
   @override
-  Future<Checkpoint> updateCheckpoint() {
+  Future<Checkpoint> updateCheckpoint(Checkpoint checkpoint) async {
     // TODO: implement updateCheckpoint
-    throw UnimplementedError();
+     try {
+      final body = CheckpointDto.toJson(checkpoint);
+      final endCoded = jsonEncode(body);
+      print("endcoded data = ${endCoded}");
+      final response = await http.put(
+        Uri.parse('$baseUrl/checkpoint'),
+        body: endCoded,
+        headers: {'Content-Type': 'application/json'},
+      );
+      final data = jsonDecode(response.body);
+      final result = CheckpointDto.fromJson(data);
+      print(result.participantId);
+      return result;
+    } catch (e) {
+      throw e;
+    }
   }
 
   @override
@@ -69,4 +86,6 @@ class CheckpointImplement extends CheckpointRepository {
       throw "Error in fecthing all checkpoints ${e}";
     }
   }
+
+
 }

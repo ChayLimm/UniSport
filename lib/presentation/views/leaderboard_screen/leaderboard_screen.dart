@@ -50,10 +50,14 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => HomeScreen()));
               }
               ),
-              const TopParticipant(),
+               TopParticipant(
+                top1: result[0],
+                top2: result[1],
+                top3: result[2],
+              ),
               const SizedBox(height: 5),
               if(result.isNotEmpty)...{
-                 for(int i = 0; i < result.length; i++)...[
+                 for(int i = 3; i < result.length; i++)...[
                 ParticipantLeaderboardTile(
                   color: result[i].color!, 
                   order: i+1, 

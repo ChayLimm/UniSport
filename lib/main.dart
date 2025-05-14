@@ -11,6 +11,7 @@ import 'package:unitime/presentation/provider/participant_provider.dart';
 import 'package:unitime/presentation/provider/race_provider.dart';
 import 'package:unitime/presentation/themes/theme.dart';
 import 'package:unitime/presentation/views/home_screen/home_screen.dart';
+import 'package:unitime/presentation/views/tracking_race_segment_screen/test_checkpoint_ui.dart';
 
 void main() {
 
