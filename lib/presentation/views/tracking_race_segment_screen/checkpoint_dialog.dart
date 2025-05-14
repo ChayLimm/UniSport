@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:unitime/domain/model/checkpoint.dart';
+import 'package:unitime/domain/model/participant.dart';
+import 'package:unitime/domain/model/segment.dart';
 import 'package:unitime/presentation/themes/theme.dart';
-import 'package:unitime/presentation/views/tracking_race_segment_screen/widgets/checkpoint_form.dart';
+import 'package:unitime/presentation/views/tracking_race_segment_screen/widget/checkpoint_form.dart';
 
 
 Future<void> showDialogModifyCheckpoint({
   required BuildContext context,
-  String? currentBib,
-  required DateTime finishTime,
+  Participant? selectedParticipant,
+  required Duration duration,
+  required Checkpoint checkpoint,
   required List<String> filterBIBs,
-  required void Function(String newBib) onSaved,
+  required Segment segment,
   bool isTwoStepRecord = false  
 }) async {
   await showDialog(
@@ -32,22 +36,15 @@ Future<void> showDialogModifyCheckpoint({
               ),
             ),
           ],
-
-          // leading: IconButton(
-          //   icon: const Icon(Icons.close),
-          //   onPressed: () => Navigator.pop(context),
-          // ),
         ),
         body: Padding(
           padding: const EdgeInsets.all(UniSpacing.m),
           child: CheckpointForm(
-            bibNumber: currentBib,
-            finishTime: finishTime,
-            availableBIBs: filterBIBs,
-            onSave: (newBib) {
-              onSaved(newBib); // Save callback 
-            },
-            isTwoStepRecord: isTwoStepRecord, // to check if edit / 2 step record bib
+            segment: segment,
+            selectedParticipant: selectedParticipant,
+            duration: duration,
+            isTwoStepRecord: isTwoStepRecord, 
+            checkpoint: checkpoint, // to check if edit / 2 step record bib
           ),
         ),
       ),

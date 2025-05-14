@@ -16,31 +16,28 @@ class CustomSearchbar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 45,
       width: 160,
-      padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 9),
+      padding: const EdgeInsets.symmetric(horizontal: 12),
       decoration: BoxDecoration(
         color: UniColor.backGroundColor2, // dark background
         borderRadius: BorderRadius.circular(UniSpacing.radius),
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Expanded(
-            child: TextField(
-              controller: controller,
-              onChanged: onChanged,
-              style: const TextStyle(color: Colors.white),
-              decoration: InputDecoration(
-                border: InputBorder.none,
-                hintText: hintText,
-                hintStyle: const TextStyle(color: Colors.white70,fontSize: 18),
-              ),
-            ),
-          ),
-          const Icon(Icons.search, color: Colors.white,size: 20,),
-        ],
+      child:  Center(
+        child: TextField(
+                
+                controller: controller,
+                onChanged: onChanged,
+                style: const TextStyle(color: Colors.white),
+                decoration: InputDecoration(
+                  suffixIcon: Icon(Icons.search), // This is your trailing widge
+                  border: InputBorder.none,
+                  hintText: hintText,
+                  hintStyle: UniTextStyles.body.copyWith(color: UniColor.grayDark)
+                  ),
+                ),
       ),
     );
+      
+   
   }
 }

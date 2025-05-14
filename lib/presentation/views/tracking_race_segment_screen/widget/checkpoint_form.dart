@@ -1,22 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import 'package:unitime/domain/model/checkpoint.dart';
+import 'package:unitime/domain/model/participant.dart';
+import 'package:unitime/domain/model/segment.dart';
+import 'package:unitime/presentation/provider/checkpoint_provider.dart';
+import 'package:unitime/presentation/provider/race_provider.dart';
 import 'package:unitime/presentation/themes/theme.dart';
+import 'package:unitime/presentation/views/tracking_race_segment_screen/tracking_segment_screen.dart';
 import 'package:unitime/presentation/widgets/UniButton.dart';
+import 'package:unitime/presentation/widgets/custom_snackbar.dart';
+import 'package:unitime/utils/formatter.dart';
 
 class CheckpointForm extends StatefulWidget {
-  final String? bibNumber; // nullable for unknown bib (2 step record)
-  final DateTime finishTime;
-  final List<String> availableBIBs;
-  final void Function(String newBib) onSave;
+  final Participant? selectedParticipant; // nullable for unknown bib (2 step record)
+  final Checkpoint checkpoint;
+  final Duration duration;
+  final Segment segment;
   final bool isTwoStepRecord; // toggle flag for check if 2 step
 
   const CheckpointForm({
     super.key,
-    this.bibNumber,
-    required this.finishTime,
-    required this.availableBIBs,
-    required this.onSave,
-    this.isTwoStepRecord = false, // defualt for edit checkpoint
+    this.selectedParticipant,
+    required this.duration,
+    this.isTwoStepRecord = false, // defualt for edit checkpoin
+    required this.checkpoint,
+    required this.segment
   });
 
   @override
@@ -24,24 +33,46 @@ class CheckpointForm extends StatefulWidget {
 }
 
 class _CheckpointFormState extends State<CheckpointForm> {
-  late String? selectedBib;
-  late DateTime finishTime;
+  late Participant? selectedParticipant;
+  late Duration duration;
+  List<Participant> unfinishParticipant = [];
+
   final TextEditingController _bibController = TextEditingController();
   // late List<String> availableBIBs;
-  // late String? note;
+  late String formattedDuration;
+
+  Future<Checkpoint> _onSave(Checkpoint checkpoint) async{
+    // perform saving logic using Service
+    final checkpointProvider = context.read<CheckpointProvider>();
+    final response = await checkpointProvider.updateCheckpoint(checkpoint);
+    return response;
+  }
 
   @override
   void initState() {
     super.initState();
-    finishTime = widget.finishTime;
+    final raceProvider = context.read<RaceProvider>();
+    formattedDuration = formatDuration(widget.duration);
 
     // Initialize bib based on form type: edit/2step
     if (widget.isTwoStepRecord) {
-      selectedBib = null;
+      selectedParticipant = null;
     } else {
-      selectedBib = widget.bibNumber;
-      if (selectedBib != null) {
-        _bibController.text = selectedBib!;
+      selectedParticipant = widget.selectedParticipant;
+      if (selectedParticipant != null) {
+        _bibController.text = selectedParticipant?.bibNumber ?? "none";
+      }
+    }
+
+     //unfinish participants
+    final checkpointProvider = context.read<CheckpointProvider>();
+    for(Participant participant in raceProvider.currentParticipant){
+      final checkpoint = checkpointProvider.getParticipantCheckpointTime(
+        widget.checkpoint.segmentId,
+        participant.id!,
+      );
+      if(checkpoint.participantId == 0){
+        unfinishParticipant.add(participant);
       }
     }
   }
@@ -52,19 +83,38 @@ class _CheckpointFormState extends State<CheckpointForm> {
     super.dispose();
   }
 
-  void onSubmitForm() {
+  void onSubmitForm() async {
+    final raceProvider = Provider.of<RaceProvider>(context,listen: false);
     if (widget.isTwoStepRecord) {
       // Use text from for 2-step record
-      selectedBib = _bibController.text;
     }
-    if (selectedBib != null && selectedBib!.isNotEmpty) {
-      widget.onSave(selectedBib!);
+    if (selectedParticipant != null) {
+      // create a new checkpoint to update
+      Checkpoint newCheckpoint  = Checkpoint(
+        id: widget.checkpoint.id,
+        segmentId: widget.checkpoint.segmentId, 
+        participantId:  selectedParticipant!.id!, // catch the new participant id from the input 
+        checkpointTime: widget.checkpoint.checkpointTime, 
+        createAt: widget.checkpoint.createAt, 
+        updateAt: widget.checkpoint.updateAt
+        );
+      final response = await _onSave(newCheckpoint);
+      UniSportSnackbar.show(
+        context: context,
+        message: "Update succesfully",
+        backgroundColor: UniColor.primary
+      );
+      raceProvider.setRace(raceProvider.seletectedRace!);
       Navigator.pop(context);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+
+
+   
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -87,31 +137,33 @@ class _CheckpointFormState extends State<CheckpointForm> {
                 ),
                 style: UniTextStyles.body,
               )
-            : DropdownButtonFormField<String>(
-                value: selectedBib,
+            : DropdownButtonFormField<Participant>(
+                value: unfinishParticipant.contains(selectedParticipant) ? selectedParticipant : null,
                 dropdownColor: UniColor.backGroundColor2,
                 decoration: InputDecoration(
                   labelText: "BIB Number",
                   labelStyle: UniTextStyles.body,
                 ),
-                items: widget.availableBIBs.map((bib) {
-                  return DropdownMenuItem(
-                    value: bib,
-                    child: Text(bib),
+                items: unfinishParticipant.map((participant) {
+                  return DropdownMenuItem<Participant>(
+                    value: participant,
+                    child: Text(participant.bibNumber),
                   );
                 }).toList(),
                 onChanged: (value) {
                   setState(() {
-                    selectedBib = value;
+                    selectedParticipant = value;
                   });
                 },
-                style: UniTextStyles.body,
-              ),
+          style: UniTextStyles.body,
+        ),
+
         const SizedBox(height: UniSpacing.l),
 
         // Finish Time
         TextFormField(
-          initialValue: finishTime.toIso8601String(),
+          enabled: false,
+          initialValue: formattedDuration,
           readOnly: true, // for only read
           decoration: InputDecoration(
             labelText: 'Finish Time',
@@ -144,9 +196,14 @@ class _CheckpointFormState extends State<CheckpointForm> {
               child: MouseRegion(
                 cursor: SystemMouseCursors.click,
                 child: UniButton(
-                  label: 'Cancel',
-                  color: UniColor.grayDark,
-                  onTrigger: () => Navigator.pop(context),
+                  label: 'Untrack',
+                  color: UniColor.red,
+                  onTrigger: ()async{
+                    final checkpointProvider= context.read<CheckpointProvider>();
+                    await checkpointProvider.deleteCheckpoint(widget.checkpoint.id!);
+                    Navigator.pop(context);
+                    
+                   },
                 ),
               ),
             ),

@@ -11,10 +11,8 @@ import 'package:unitime/presentation/views/race_segment_screen/widget/segment_ca
 import 'package:unitime/presentation/widgets/timer.dart';
 import 'package:unitime/presentation/widgets/UniButton.dart';
 import 'package:unitime/presentation/widgets/confirmation_dialog.dart';
-import 'package:unitime/presentation/widgets/custom_snackbar.dart';
 import 'package:unitime/presentation/widgets/label.dart';
 import 'package:unitime/presentation/widgets/uni_appbar.dart';
-import 'package:unitime/presentation/widgets/uni_bottomnav.dart';
 
 class RaceSegmentScreen extends StatelessWidget {
   const RaceSegmentScreen({super.key});
@@ -34,13 +32,13 @@ class RaceSegmentScreen extends StatelessWidget {
 
     bool isConfirm  = await showConfirmationDialog(context: context, title: "Are you sure?", content: "You want to end this race?");
     if(isConfirm){
-      for(Segment segment in segments){
-        if(!segment.markAsFinish){
-          UniSportSnackbar.show(context: context, message: "${segment.name} have not end yet", backgroundColor: UniColor.red);
-          return;
-        }
-    
-    }
+      //   for(Segment segment in segments){
+      //     if(!segment.markAsFinish){
+      //       UniSportSnackbar.show(context: context, message: "${segment.name} have not end yet", backgroundColor: UniColor.red);
+      //       return;
+      //     }
+      
+      // }
       raceProvider.endRace(raceProvider.seletectedRace!.id);
       Navigator.push(context, MaterialPageRoute(builder: (context){
         return LeaderboardScreen();
@@ -63,7 +61,6 @@ class RaceSegmentScreen extends StatelessWidget {
     
 
     return Scaffold(
-      bottomNavigationBar: UniBottomnav(),
       backgroundColor: UniColor.backGroundColor,
       body: Padding(
         padding: EdgeInsets.all(20),

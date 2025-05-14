@@ -37,4 +37,11 @@ class ParticipantProvider extends ChangeNotifier {
     participantList.removeWhere((e) => e.id == id);
     notifyListeners();
   }
+
+  // NARONG CODE 
+  List<Participant> searchParticipants(String searchQuery,List<Participant> participantList){
+    return participantList.where((participant){
+      return participant.bibNumber.toLowerCase().contains(searchQuery.toLowerCase());
+    }).toList();
+  }
 }
